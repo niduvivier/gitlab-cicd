@@ -8,7 +8,7 @@ stages:
   stage: release
   script:
     - echo $CI_REPOSITORY_URL
-    - CI_PUSH_REPO=$(echo ${CI_REPOSITORY_URL} | sed -r 's#^(https?://).*?@(.*)$#\1\2#')
+    - CI_PUSH_REPO=$(echo ${CI_REPOSITORY_URL} | sed -r 's#^(https?://).*?@(.*)$#\1semrelbot:${GITLAB_TOKEN}\2#')
     - echo $CI_PUSH_REPO
     - git remote set-url --push origin "${CI_PUSH_REPO}"
     - git remote -v
