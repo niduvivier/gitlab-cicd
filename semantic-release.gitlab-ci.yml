@@ -6,10 +6,12 @@ stages:
 .semantic-release:
   image: $REGISTRY/semantic-release:v1.0.0
   stage: release
-  before_script:
-    - CI_PUSH_REPO=$(echo ${CI_REPOSITORY_URL} | sed -r 's#^(https?://).*?@(.*)$#\1\2#')
-    - git remote set-url --push origin "${CI_PUSH_REPO}"
   script:
+    - echo $CI_REPOSITORY_URL
+    - CI_PUSH_REPO=$(echo ${CI_REPOSITORY_URL} | sed -r 's#^(https?://).*?@(.*)$#\1\2#')
+    - echo $CI_PUSH_REPO
+    - git remote set-url --push origin "${CI_PUSH_REPO}"
+    - git remote -v
     - semantic-release --branches $CI_DEFAULT_BRANCH --debug --dry-run --plugins '@semantic-release/commit-analyzer'
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
