@@ -7,8 +7,11 @@ stages:
   image: $REGISTRY/semantic-release:v1.0.0
   stage: release
   script:
-    - CI_PUSH_REPO=$(echo ${CI_REPOSITORY_URL} | sed -r 's#^(https?://).*?@(.*)$#\1semrelbot:${GITLAB_TOKEN}\2#')
+    - CI_PUSH_REPO=$(echo ${CI_REPOSITORY_URL} | sed -r 's#^(https?://).*?@(.*)$#\1\2#')
     - git remote set-url origin "${CI_PUSH_REPO}"
+    - git config --global credential.http://gitlab.dev.yelo.inet.telenet.be.username semrelbot
+    - git config --global credential.helper 'store /.gitcreds'
+    - echo "http://semrelbot:${GITLAB_TOKEN}@gitlab.dev.yelo.inet.telenet.be" > /.gitcreds
     - semantic-release --branches $CI_DEFAULT_BRANCH --debug --dry-run --plugins '@semantic-release/commit-analyzer'
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
