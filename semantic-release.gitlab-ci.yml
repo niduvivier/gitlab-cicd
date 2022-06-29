@@ -7,7 +7,7 @@ stages:
   image: $REGISTRY/semantic-release:v1.0.0
   stage: release
   script:
-    - semantic-release --branches $CI_DEFAULT_BRANCH --debug --dry-run --plugins '@semantic-release/commit-analyzer' --plugins '@semantic-release/github@semantic-release/gitlab'
+    - semantic-release --branches $CI_DEFAULT_BRANCH --debug --dry-run --plugins '@semantic-release/commit-analyzer' --plugins '@semantic-release/gitlab'
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
 
