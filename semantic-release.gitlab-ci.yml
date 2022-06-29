@@ -4,7 +4,7 @@ stages:
   - release
 
 .semantic-release:
-  image: $CI_REGISTRY/semantic-release:1.0.0
+  image: $REGISTRY/semantic-release:1.0.0
   stage: release
   script:
     - semantic-release
