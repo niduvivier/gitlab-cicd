@@ -7,7 +7,7 @@ stages:
   image: $REGISTRY/semantic-release:v1.0.0
   stage: release
   script:
-    - semantic-release --branch $CI_DEFAULT_BRANCH
+    - semantic-release --branches $CI_DEFAULT_BRANCH
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
 
