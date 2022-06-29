@@ -1,6 +1,6 @@
 ---
 
-include: semenatic-release.gitlab-ci.yml
+include: semantic-release.gitlab-ci.yml
 
 semantic-release:
   extends: .semantic-release
