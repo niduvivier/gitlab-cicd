@@ -6,8 +6,12 @@ stages:
 .semantic-release:
   image: $REGISTRY/semantic-release:v1.0.0
   stage: release
+  before_script:
+    - git config --global credential.http://gitlab.dev.yelo.inet.telenet.be.username semrelbot
+    - git config --global credential.helper 'store --file /.gitcredentials'
+    - echo -n "http://semrelbot:${GITLAB_TOKEN}@gitlab.dev.yelo.inet.telenet.be" > /.gitcredentials
   script:
-    - semantic-release --branches $CI_DEFAULT_BRANCH --debug --dry-run --plugins '@semantic-release/commit-analyzer' --plugins '@semantic-release/gitlab'
+    - semantic-release --branches $CI_DEFAULT_BRANCH --debug --dry-run --plugins '@semantic-release/commit-analyzer'
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
 
