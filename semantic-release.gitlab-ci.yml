@@ -4,7 +4,7 @@ stages:
   - release
 
 .semantic-release:
-  image: $REGISTRY/semantic-release:v1.0.0
+  image: $REGISTRY/semantic-release:v1.1.0
   stage: release
   script:
     - semantic-release --debug --dry-run --extends @enttribe/semantic-release-config
