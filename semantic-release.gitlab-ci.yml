@@ -11,7 +11,7 @@ stages:
   image: $REGISTRY/semantic-release:v1.1.0
   stage: release
   script:
-    - GL_TOKEN=${SEMANTICRELEASE_TOKEN} semantic-release --debug --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
+    - GL_TOKEN=${SEMANTICRELEASE_TOKEN} semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
 
