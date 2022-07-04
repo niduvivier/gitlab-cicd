@@ -1,0 +1,12 @@
+---
+
+
+.gitlab_http_access:
+  variables:
+    GITLAB_USERNAME: gitlab-ci-token
+    GITLAB_USERAUTH: "${CI_JOB_TOKEN}"
+  before_script:
+    - URL_SCHEME_ISH=$(echo "${CI_SERVER_URL}" | awk -F/ '{print $1}')
+    - git config --global url."${URL_SCHEME_ISH}//${GITLAB_USERNAME}:${GITLAB_USERAUTH}@${CI_SERVER_HOST}".insteadOf "${CI_SERVER_URL}"
+
+...
