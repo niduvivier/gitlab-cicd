@@ -1,9 +1,13 @@
 ---
 
+include: gitlab-http-access.gitlab-ci.yml
+
 stages:
   - release
 
 .semantic-release:
+  extends:
+    - .gitlab_http_access
   image: $REGISTRY/semantic-release:v1.1.0
   stage: release
   script:
