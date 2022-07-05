@@ -6,6 +6,11 @@ stages:
   - release
 
 .semantic-release:
+  variables:
+    SEMANTIC_RELEASE_USER: semantic-release-bot
+    SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}
+    GITLAB_USERNAME: ${SEMANTIC_RELEASE_USER}
+    GITLAB_USERAUTH: ${SEMANTIC_RELEASE_AUTH}
   extends:
     - .gitlab_http_access
   image: $REGISTRY/semantic-release:v1.1.0
