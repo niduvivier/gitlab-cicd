@@ -2,10 +2,21 @@
 
 include: gitlab-http-access.gitlab-ci.yml
 
-stages:
-  - release
+# Use this job template to provide automated samentic version tags and gitlab releases
+# for you projects
+#
+# Use this job template by including this file from the project
+# and defining the release stage
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     version: ${latest project release version}
+#     file: semantic-release.gitlab-ci.yml  
+# stages:
+#   - release
 
-.semantic-release:
+semantic-release:
   variables:
     SEMANTIC_RELEASE_USER: semantic-release-bot
     SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}

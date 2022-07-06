@@ -1,5 +1,22 @@
 ---
 
+# This job template can be used to provide an authenticated gitlab repository url
+# it defaults to the gitlab ci user and job token, which is actually the same as default
+# repository clone origin url in CI jobs.
+#
+# Other user and private token can be assigned to teh variables GITLAB_USERNAME and GITLAB_USERAUTH
+# to change this behaviour
+#
+# This job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      version: ${project latest version}
+#      file: gitlab-http-access.gitlab-ci.yml
+#  job1:
+#    extends: .gitlab_http_access
+#    script:
+#      - /bin/true
 
 .gitlab_http_access:
   variables:
