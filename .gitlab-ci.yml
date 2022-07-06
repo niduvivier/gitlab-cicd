@@ -2,7 +2,7 @@
 
 include: semantic-release.gitlab-ci.yml
 
-semantic-release:
-  extends: .semantic-release
+stages:
+  - release
 
 ...
