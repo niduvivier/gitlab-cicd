@@ -12,18 +12,18 @@ include: gitlab-http-access.gitlab-ci.yml
 # include:
 #   - project: automation/cicd/templates
 #     version: ${latest project release version}
-#     file: semantic-release.gitlab-ci.yml  
+#     file: semantic-release.gitlab-ci.yml
 # stages:
 #   - release
 
 semantic-release:
+  extends:
+    - .gitlab_http_access
   variables:
     SEMANTIC_RELEASE_USER: semantic-release-bot
     SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}
     GITLAB_USERNAME: ${SEMANTIC_RELEASE_USER}
     GITLAB_USERAUTH: ${SEMANTIC_RELEASE_AUTH}
-  extends:
-    - .gitlab_http_access
   image: $REGISTRY/semantic-release:v1.3.10@sha256:297a0ffe86b9aeaec56dae2df4e9863ce00d9fd775cbe3d50c9b917989578439
   stage: release
   script:
