@@ -28,6 +28,6 @@
     - GITLAB_AUTHENTICATED_URL="${URL_SCHEME_ISH}//${GITLAB_USERNAME}:${GITLAB_USERAUTH}@${CI_SERVER_HOST}"
     - GITLAB_AUTHENTICATED_REPO_URL="${GITLAB_AUTHENTICATED_URL}/${CI_PROJECT_PATH}.git"
     - git config --global url."${GITLAB_AUTHENTICATED_URL}".insteadOf "${CI_SERVER_URL}"
-    - [[ "${GITLAB_GIT_REPLACE_SSH_BY_HTTP}" == "true" ]] && git config --global url."${GITLAB_AUTHENTICATED_URL}/".insteadOf "gitlab@${CI_SERVER_HOST}:"
+    - '[[ "${GITLAB_GIT_REPLACE_SSH_BY_HTTP}" == "true" ]] && git config --global url."${GITLAB_AUTHENTICATED_URL}/".insteadOf "gitlab@${CI_SERVER_HOST}:"'
 
 ...
