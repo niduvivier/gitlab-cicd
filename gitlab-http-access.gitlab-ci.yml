@@ -22,12 +22,11 @@
   variables:
     GITLAB_USERNAME: gitlab-ci-token
     GITLAB_USERAUTH: "${CI_JOB_TOKEN}"
-    GITLAB_GIT_REPLACE_SSH_BY_HTTP: 'false'
   before_script:
     - URL_SCHEME_ISH=$(echo "${CI_SERVER_URL}" | awk -F/ '{print $1}')
     - GITLAB_AUTHENTICATED_URL="${URL_SCHEME_ISH}//${GITLAB_USERNAME}:${GITLAB_USERAUTH}@${CI_SERVER_HOST}"
     - GITLAB_AUTHENTICATED_REPO_URL="${GITLAB_AUTHENTICATED_URL}/${CI_PROJECT_PATH}.git"
     - git config --global url."${GITLAB_AUTHENTICATED_URL}".insteadOf "${CI_SERVER_URL}"
-    - '[[ "${GITLAB_GIT_REPLACE_SSH_BY_HTTP}" == "true" ]] && git config --global url."${GITLAB_AUTHENTICATED_URL}/".insteadOf "gitlab@${CI_SERVER_HOST}:"'
+    - git config --global url."${GITLAB_AUTHENTICATED_URL}/".insteadOf "gitlab@${CI_SERVER_HOST}:"
 
 ...
