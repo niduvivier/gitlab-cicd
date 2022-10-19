@@ -24,7 +24,7 @@ semantic-release:
     SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}
     GITLAB_USERNAME: ${SEMANTIC_RELEASE_USER}
     GITLAB_USERAUTH: ${SEMANTIC_RELEASE_AUTH}
-  image: $REGISTRY/semantic-release:v1.3.15@sha256:0bd3c05cae28416aefe8ca1952ecf29fc68ef6c157a7631c3999a9dabea8165b
+  image: $REGISTRY/semantic-release:v1.3.16@sha256:cfa085af679aa6557213c4dc5b5373a13cbabd14bf5670b873ee4418d2897e0c
   stage: release
   script:
     - GL_TOKEN=${SEMANTICRELEASE_TOKEN} semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
