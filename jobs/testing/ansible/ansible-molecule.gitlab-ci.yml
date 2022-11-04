@@ -24,7 +24,7 @@ molecule:
     MOLECULE_CMD_OPTS: ''
     MOLECULE_TEST_CMD_OPTS: ''
   stage: test
-  image: $REGISTRY/ansible/molecule:v2.0.1@sha256:904d4fa9ed0f2ff8f778790310043b97d79541e0ad038470266bd4f2a8ae0ad1
+  image: $REGISTRY/ansible/molecule
   script:
     - scenarios=$(molecule list --format plain 2>/dev/null | grep -v '> list' | awk '{print $4}' | sort | uniq)
     - |-

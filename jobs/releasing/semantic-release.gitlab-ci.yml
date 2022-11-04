@@ -25,11 +25,13 @@ semantic-release:
     SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}
     GITLAB_USERNAME: ${SEMANTIC_RELEASE_USER}
     GITLAB_USERAUTH: ${SEMANTIC_RELEASE_AUTH}
-  image: $REGISTRY/semantic-release:v1.3.18@sha256:86735f04410f4baf7610f567b80a6af30692b8290bc5a8f84393bed618866352
+  image: $REGISTRY/semantic-release
   stage: release
   script:
     - GL_TOKEN=${SEMANTICRELEASE_TOKEN} semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH =~ /^(alpha|beta|next|next-major)$/
+    - if: $CI_COMMIT_BRANCH =~ /^(stable-)?v?([0-9]+)(\.([0-9]+|x))?\.x$/
 
 ...

@@ -15,7 +15,7 @@ variables:
 
 .ansible-test-prereq:
   stage: test
-  image: $REGISTRY/ansible/molecule:v2.0.1@sha256:904d4fa9ed0f2ff8f778790310043b97d79541e0ad038470266bd4f2a8ae0ad1
+  image: $REGISTRY/ansible/molecule
   before_script:
     - pip install -r tests/**/requirements.txt || true
     - |-
