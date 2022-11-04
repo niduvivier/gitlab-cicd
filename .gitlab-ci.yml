@@ -1,6 +1,7 @@
 ---
 
-include: semantic-release.gitlab-ci.yml
+include: 
+  - local: /jobs/releasing/semantic-release.gitlab-ci.yml
 
 stages:
   - release

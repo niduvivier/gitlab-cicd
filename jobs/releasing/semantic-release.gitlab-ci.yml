@@ -1,6 +1,7 @@
 ---
 
-include: gitlab-http-access.gitlab-ci.yml
+include:
+  - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
 
 # Use this job template to provide automated samentic version tags and gitlab releases
 # for you projects
@@ -12,7 +13,7 @@ include: gitlab-http-access.gitlab-ci.yml
 # include:
 #   - project: automation/cicd/templates
 #     version: ${latest project release version}
-#     file: semantic-release.gitlab-ci.yml
+#     file: jobs/releasing/semantic-release.gitlab-ci.yml
 # stages:
 #   - release
 

@@ -1,0 +1,117 @@
+---
+
+# This job requires the user to include this job template
+# This job requires the user to define the test stage in his pipeline
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     version: ${latest project version}
+#     file: jobs/testing/ansible/ansible-testing.gitlab-ci.yml
+# stages:
+#   - test
+
+variables:
+  COLLECTION_PATH: '$${COLLECTION_PATH}'
+
+.ansible-test-prereq:
+  stage: test
+  image: $REGISTRY/ansible/molecule:v2.0.1@sha256:904d4fa9ed0f2ff8f778790310043b97d79541e0ad038470266bd4f2a8ae0ad1
+  before_script:
+    - pip install -r tests/**/requirements.txt || true
+    - |-
+      #!/bin/bash
+      set -xv
+
+      NAMESPACE=local
+      NAME=fake
+      PREFIX=/tmp/ansible_collections
+      COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
+      
+      if [[ -f "galaxy.yml" ]]
+      then
+        NAMESPACE=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["namespace"])')
+        NAME=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["name"])')
+      fi
+      
+      mkdir -p $COLLECTION_PATH
+
+      if [[ -f "galaxy.yml" ]]
+      then
+        cp -R . $COLLECTION_PATH
+        rm -rf $COLLECTION_PATH/.venv
+        
+      else
+        # tests
+        [[ -d "tests" ]] && mkdir -p $COLLECTION_PATH/tests && cp -R tests/* $COLLECTION_PATH/tests/
+
+        # plugins
+        [[ -d "library" ]] && mkdir -p $COLLECTION_PATH/plugins/modules && cp -R library/* $COLLECTION_PATH/plugins/modules/
+        [[ -d "module_utils" ]] && mkdir -p $COLLECTION_PATH/plugins/module_utils && cp -R module_utiles/ $COLLECTION_PATH/plugins/module_utils/
+        [[ -d "action_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/action && cp -R action_plugins/* $COLLECTION_PATH/plugins/action/
+        [[ -d "cache_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/cache && cp -R cache_plugins/* $COLLECTION_PATH/plugins/cache/
+        [[ -d "connection_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/connection && cp -R connection_plugins/* $COLLECTION_PATH/plugins/connection/
+        [[ -d "filter_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/filter && cp -R filter_plugins/* $COLLECTION_PATH/plugins/filter/
+        [[ -d "inventory_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/inventory && cp -R inventory_plugins/* $COLLECTION_PATH/plugins/inventory/
+        [[ -d "lookup_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/lookup && cp -R lookup_plugins/* $COLLECTION_PATH/plugins/lookup/
+        [[ -d "test_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/test && cp -R test_plugins/* $COLLECTION_PATH/plugins/test/
+        [[ -d "vars_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/vars && cp -R vars_plugins/* $COLLECTION_PATH/plugins/vars/
+        
+        # role content
+        mkdir -p $COLLECTION_PATH/roles/fake
+        [[ -d "defaults" ]] && cp -R ./defaults $COLLECTION_PATH/roles/fake/
+        [[ -d "files" ]] && cp -R ./files $COLLECTION_PATH/fake/
+        [[ -d "handlers" ]] && cp -R ./handlers $COLLECTION_PATH/roles/fake/
+        [[ -d "meta" ]] && cp -R ./meta $COLLECTION_PATH/roles/fake/
+        [[ -d "tasks" ]] && cp -R ./tasks $COLLECTION_PATH/roles/fake/
+        [[ -d "templates" ]] && cp -R ./templates $COLLECTION_PATH/roles/fake/
+        [[ -d "vars" ]] && cp -R ./vars $COLLECTION_PATH/roles/fake/
+
+        cd ${COLLECTION_PATH}
+        echo "---
+      version: 0.0.1
+      ..." > galaxy.yml
+
+      fi
+
+      eval export COLLECTION_PATH=$COLLECTION_PATH
+
+
+ansible-sanity:
+  extends:
+    - .ansible-test-prereq
+  allow_failure: true
+  script:
+    # local will only have python 3.9
+    - cd $COLLECTION_PATH
+    - rm -rf roles/fake/.venv
+    - rm -rf roles/fake/.git
+    - ansible-test sanity --local
+    # but docker default should be looked into to get it to work
+    #  => untested, but moving to ansible-core 2.12 (ansible 5.x) might fix
+    #     cfr https://github.com/ansible/ansible/commit/b752d071633d244f98f327306e160f7915f38829
+    #     which removes to function get_docker_networks which currently fails
+    #- ansible-test sanity --docker default
+
+
+ansible-units:
+  extends:
+    - .ansible-test-prereq
+  services: []
+  rules:
+    - exists:
+        - '*_plugins/*.py'
+        - '*_plugins/**/*.py'
+        - library/*.py
+        - library/**/*.py
+        - module_utils/*.py
+        - module_utils/**/*.py
+        - plugins/**/*.py
+        - tests/unit/*.py
+        - tests/unit/**/*.py
+  script:
+    - cd $COLLECTION_PATH
+    - ansible-test units --local --coverage
+  # TODO archive coverage
+  # TODO --local to --docker default (network issues for install requirements + python2.x)
+
+...
