@@ -1,0 +1,29 @@
+---
+
+# This job template can be used to run a job in parallel matrix over current supported range
+# of operating systems
+#
+# This job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      version: ${project latest version}
+#      file: jobs/utils/supported-os-matrix.yml
+#  job1:
+#    extends: .supported-os-matrix
+#    script:
+#      - /bin/true
+
+.supported-os-matrix:
+  parallel:
+    matrix:
+      - EL_VERSION:
+          - 7
+        BASE_OS:
+          - centos
+      - EL_VERSION:
+          - 8
+        BASE_OS:
+          - rockylinux
+
+...
