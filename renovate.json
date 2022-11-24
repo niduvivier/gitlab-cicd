@@ -1,7 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>renovate-bot/renovate-config"
+    "local>renovate-bot/renovate-config",
+    "docker:disable"
   ],
   "ignoreTests": true
 }

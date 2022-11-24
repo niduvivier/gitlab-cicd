@@ -1,0 +1,36 @@
+---
+
+include: 
+  - local: /jobs/utils/supported-os-matrix.gitlab-ci.yml
+  - local: /jobs/building/containers/kaniko.gitlab-ci.yml
+
+# This job template can be used to build containers from Dockerfiles using kaniko
+#
+# For details on the use of KANIKO_COMMAND cfr [kaniko job](jobs/building/containers/kaniko.gitlab-ci.yml)
+#
+# This job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      version: ${project latest version}
+#      file: jobs/building/containers/kaniko-matrix.gitlab-ci.yml
+#  stages:
+#    - build
+#  job1:
+#    extends: .kaniko-matrix
+#    script:
+#      - >
+#        ${KANIKO_COMMAND}
+#        --dockerfile Dockerfile 
+#        --build-arg EL_VERSION=${EL_VERSION}
+#        --build-arg BASE_OS=${BASE_OS}
+#        --destination $REGISTRY/<namespace>/<container_id>:<tag>
+#
+# where container_id and/or tag should contain use of BASE_OS and EL_VERSION based on your strategy
+
+.kaniko-matrix:
+  extends:
+    - .kaniko
+    - .supported-os-matrix
+
+...

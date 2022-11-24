@@ -1,6 +1,7 @@
 ---
 
-include: gitlab-http-access.gitlab-ci.yml
+include:
+  - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
 
 # Use this job template to provide automated samentic version tags and gitlab releases
 # for you projects
@@ -12,7 +13,7 @@ include: gitlab-http-access.gitlab-ci.yml
 # include:
 #   - project: automation/cicd/templates
 #     version: ${latest project release version}
-#     file: semantic-release.gitlab-ci.yml
+#     file: jobs/releasing/semantic-release.gitlab-ci.yml
 # stages:
 #   - release
 
@@ -24,11 +25,13 @@ semantic-release:
     SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}
     GITLAB_USERNAME: ${SEMANTIC_RELEASE_USER}
     GITLAB_USERAUTH: ${SEMANTIC_RELEASE_AUTH}
-  image: $REGISTRY/semantic-release:v1.3.19@sha256:ba1388f0a272cbf44edfb3009635581d57777a32db67486c2e5840432cfed34a
+  image: $REGISTRY/semantic-release
   stage: release
   script:
     - GL_TOKEN=${SEMANTICRELEASE_TOKEN} semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
   rules:
     - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH =~ /^(alpha|beta|next|next-major)$/
+    - if: $CI_COMMIT_BRANCH =~ /^(stable-)?v?([0-9]+)(\.([0-9]+|x))?\.x$/
 
 ...

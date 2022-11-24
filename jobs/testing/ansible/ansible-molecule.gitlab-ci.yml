@@ -1,0 +1,40 @@
+---
+
+include: 
+  - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
+  - local: /services/docker-dind.gitlab-ci.yml
+
+# This job requires the user to include this job template
+# This job requires the user to define the test stage in his pipeline
+# eg:
+# include:
+#   - project: automation/testing/molecule-templates
+#     version: ${latest project version}
+#     file: ansible-molecule.gitlab-ci.yml
+# stages:
+#   - test
+
+molecule:
+  extends:
+    - .gitlab_http_access
+    - .docker-dind
+  variables:
+    ANSIBLE_FORCE_COLOR: 'true'
+    ANSIBLE_DIFF_ALWAYS: 'true'
+    MOLECULE_CMD_OPTS: ''
+    MOLECULE_TEST_CMD_OPTS: ''
+  stage: test
+  image: $REGISTRY/ansible/molecule
+  script:
+    - scenarios=$(molecule list --format plain 2>/dev/null | grep -v '> list' | awk '{print $4}' | sort | uniq)
+    - |-
+      set -x
+      for scenario in $scenarios
+      do
+        echo " ------- Running scenario ${scenario} ------- "
+        molecule reset --scenario-name "${scenario}"
+        molecule ${MOLECULE_CMD_OPTS} test --scenario-name "${scenario}" ${MOLECULE_TEST_CMD_OPTS}
+        echo " ------- END: Running scenario ${scenario} ------- "
+      done
+
+...

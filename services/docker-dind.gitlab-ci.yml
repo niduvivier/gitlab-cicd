@@ -1,0 +1,32 @@
+---
+
+# This job template defines the correct way of using docker dind as a service
+# This job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      version: ${project latest version}
+#      file: services/docker-dind.gitlab-ci.yml
+#  job1:
+#    extends: .docker-dind
+#    script:
+#      - /bin/true
+# OR
+#   include: ...
+#   job2:
+#     services:
+#       - some_service
+#       - !reference [.docker-dind, services]
+
+variables:
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DOCKER_DAEMON_OPTIONS: "--tls=false --insecure-registry=${REGISTRY} --insecure-registry=${REGISTRY_PROXY} --insecure-registry=${REGISTRY_GROUP} --registry-mirror=http://${REGISTRY_GROUP}"
+
+.docker-dind:
+  services:
+    - name: docker:dind
+      entrypoint: [ "sh", "-c", "dockerd-entrypoint.sh $DOCKER_DAEMON_OPTIONS" ]
+
+...

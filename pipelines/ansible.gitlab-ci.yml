@@ -1,0 +1,22 @@
+---
+
+# This pipeline template is intended to be referenced as an include in a project
+# which incorporates any form of ansible (role, collection, project, ...)
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     version: ${latest project version}
+#     file: pipelines/ansible.gitlab-ci.yml
+
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - local: /jobs/testing/ansible/ansible-molecule.gitlab-ci.yml
+  - local: /jobs/testing/ansible/ansible-test.gitlab-ci.yml
+  - local: /jobs/releasing/semantic-release.gitlab-ci.yml
+
+stages:
+  - test
+  - release
+
+...

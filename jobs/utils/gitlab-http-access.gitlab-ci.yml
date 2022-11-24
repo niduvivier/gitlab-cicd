@@ -12,7 +12,7 @@
 #  include:
 #    - project: automation/cicd/templates
 #      version: ${project latest version}
-#      file: gitlab-http-access.gitlab-ci.yml
+#      file: jobs/utils/gitlab-http-access.gitlab-ci.yml
 #  job1:
 #    extends: .gitlab_http_access
 #    script:
