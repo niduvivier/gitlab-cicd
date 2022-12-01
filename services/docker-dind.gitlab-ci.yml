@@ -22,7 +22,7 @@ variables:
   DOCKER_HOST: "tcp://docker:2375"
   DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
-  DOCKER_DAEMON_OPTIONS: "--tls=false --insecure-registry=${REGISTRY} --insecure-registry=${REGISTRY_PROXY} --insecure-registry=${REGISTRY_GROUP} --registry-mirror=http://${REGISTRY_GROUP}"
+  DOCKER_DAEMON_OPTIONS: "--tls=false --insecure-registry=${REGISTRY} --insecure-registry=${REGISTRY_PROXY} --insecure-registry=${REGISTRY_GROUP} --registry-mirror=http://${REGISTRY_GROUP} --ipv6 --fixed-cidr-ipv6 fd00:daed:beef::/48"
 
 .docker-dind:
   services:
