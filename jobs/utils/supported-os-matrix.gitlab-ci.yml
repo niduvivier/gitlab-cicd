@@ -23,6 +23,7 @@
           - centos
       - EL_VERSION:
           - 8
+          - 9
         BASE_OS:
           - rockylinux
 
