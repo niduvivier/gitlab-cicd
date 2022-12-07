@@ -1,0 +1,62 @@
+---
+
+# This job template utility can be used to run or check a job template in awx
+#
+# AWX_COMMAND normally contains anything you need:
+#
+# If any of these settings are not required, or require a different value please read the implementation carefully
+# and use as much on the assignment to KANIKO_COMMAND as possible
+#
+# This job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      ref: ${project latest version}
+#      file:
+#        - jobs/utils/awx.gitlab-ci.yml
+#  stages:
+#    - deploy
+#  job1:
+#    extends: .awx-job
+#    stage: deploy
+#    variables:
+#      AWX_TOKEN: '<to provide>'
+#      AWX_TEMPLATE: 'some_job_to_deploy'
+#      AWX_INVENTORY: 'production'
+#      AWX_JOB_TYPE: 'run'
+#      AWX_EXTRA_VARS: '{"app": "example", "applications": {"example": {"version": "1.2.3"}}}'
+
+.awx-job:
+  variables:
+    AWX_TOKEN: ''
+    AWX_TEMPLATE: ''
+    AWX_INVENTORY: ''
+    AWX_JOB_TYPE: 'check'
+    AWX_SCM_BRANCH:
+      value: $CI_DEFAULT_BRANCH
+      expand: true
+    AWX_EXTRA_VARS: '{}'
+    AWX_DEFAULT_EXTRA_VARS: 
+      value: '{"git_user": "$GITLAB_USER_LOGIN"}'
+      expand: true
+    AWX_COMMAND:
+      expand: true
+      value: >
+        awx
+        --conf.host $CMT_AWX_HOST
+        --conf.token $AWX_TOKEN
+        job_templates launch $AWX_TEMPLATE 
+        --inventory $AWX_INVENTORY
+        --job_type $AWX_JOB_TYPE
+        --scm_branch $AWX_SCM_BRANCH
+        --monitor
+        --credentials $GITLAB_USER_LOGIN,entertainment-vault-pass
+        --extra_vars=$AWX_EXTRA_VARS
+  image:
+    name: $REGISTRY/awxkit:21.5.0
+  before_script:
+    - AWX_EXTRA_VARS=$(echo $AWX_DEFAULT_EXTRA_VARS $AWX_EXTRA_VARS | jq -scM 'reduce .[] as $item ({}; . * $item)')
+  script:
+    - $AWX_COMMAND
+
+...
