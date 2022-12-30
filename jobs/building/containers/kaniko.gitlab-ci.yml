@@ -5,17 +5,17 @@ include:
 
 # This job template can be used to build containers from Dockerfiles using kaniko
 #
-# KANIKO_COMMAND normally contains anything you need:
+# KANIKO_COMMAND should contain anything you need:
 #   - proxy settings as build-arg's
-#   - correct use of $REGISTRY and $REGISTRY_GROUP as  required by our nexus setup
-#   - --cache (caches intermediatte build layers on docker registry, makes next builds faster most of the time)
-#   - --reproducible (generates layes and containers with epoch 0 timestamps eg)
+#   - correct use of $REGISTRY and $REGISTRY_GROUP as required by our nexus setup
+#   - --cache (caches intermediate build layers on docker registry, makes next builds faster most of the time)
+#   - --reproducible (generates layers and containers with epoch 0 timestamps eg)
 #   - build context set to project directory
 #
 # If any of these settings are not required, or require a different value please read the implementation carefully
 # and use as much on the assignment to KANIKO_COMMAND as possible
 #
-# This job template is ment to be included and extended as part of another job
+# This job template is meant to be included and extended as part of another job
 # eg.:
 #  include:
 #    - project: automation/cicd/templates
