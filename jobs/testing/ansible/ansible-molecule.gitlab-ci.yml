@@ -23,12 +23,14 @@ molecule:
     ANSIBLE_DIFF_ALWAYS: 'true'
     MOLECULE_CMD_OPTS: ''
     MOLECULE_TEST_CMD_OPTS: ''
+  parallel: 4
   stage: test
   image: $REGISTRY/ansible/molecule
   script:
-    - scenarios=$(molecule list --format plain 2>/dev/null | grep -v '> list' | awk '{print $4}' | sort | uniq)
     - |-
       set -x
+      molecule list -f yaml 2>/dev/null | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | grep -v '> list' | grep -vE '^section_' > scenario_list.yml
+      scenarios=$(yq -rc --argjson ntot ${CI_NODE_TOTAL} --argjson nidx $((${CI_NODE_INDEX}-1)) '[.[]|.["Scenario Name"]]|unique|[_nwise($ntot)]|transpose|map(map(values))[$nidx][]?' scenario_list.yml)
       for scenario in $scenarios
       do
         echo " ------- Running scenario ${scenario} ------- "
