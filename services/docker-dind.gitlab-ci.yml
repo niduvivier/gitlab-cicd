@@ -22,7 +22,7 @@ variables:
   DOCKER_HOST: "tcp://docker:2375"
   DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
-  DOCKER_DAEMON_OPTIONS: "--tls=false --insecure-registry=${REGISTRY} --insecure-registry=${REGISTRY_PROXY} --insecure-registry=${REGISTRY_GROUP} --registry-mirror=http://${REGISTRY_GROUP} --ipv6 --fixed-cidr-v6 fd00:daed:beef::/48 --bip 172.18.0.1/16 --default-address-pool base=172.19.0.0/16,size=24 --default-address-pool base=fd01:dead:beef::/64,size=80 --experimental --ip6tables --dns 192.168.229.49 --dns 192.168.230.49 --dns 2a02:1800:100::100:1 --dns 2a02:1800:100::100:2 --dns 195.130.130.12 --dns 195.130.131.12 --dns-search inet.telenet.be --dns-search telenet-ops.be"
+  DOCKER_DAEMON_OPTIONS: "--tls=false --insecure-registry=${REGISTRY} --insecure-registry=${REGISTRY_PROXY} --insecure-registry=${REGISTRY_GROUP} --registry-mirror=http://${REGISTRY_GROUP} --ipv6 --fixed-cidr-v6 fd0f:dead:beef::/48 --bip 172.31.0.1/16 --default-address-pool base=172.30.0.0/16,size=24 --default-address-pool base=fd0e:dead:beef::/64,size=80 --experimental --ip6tables --dns 192.168.229.49 --dns 192.168.230.49 --dns 2a02:1800:100::100:1 --dns 2a02:1800:100::100:2 --dns 195.130.130.12 --dns 195.130.131.12 --dns-search inet.telenet.be --dns-search telenet-ops.be"
 
 .docker-dind:
   services:
