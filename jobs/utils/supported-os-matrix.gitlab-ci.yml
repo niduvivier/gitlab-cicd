@@ -7,7 +7,7 @@
 # eg.:
 #  include:
 #    - project: automation/cicd/templates
-#      version: ${project latest version}
+#      ref: ${project latest version}
 #      file: jobs/utils/supported-os-matrix.yml
 #  job1:
 #    extends: .supported-os-matrix

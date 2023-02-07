@@ -12,7 +12,7 @@ include:
 # eg.:
 #  include:
 #    - project: automation/cicd/templates
-#      version: ${project latest version}
+#      ref: ${project latest version}
 #      file: jobs/building/containers/kaniko-matrix.gitlab-ci.yml
 #  stages:
 #    - build

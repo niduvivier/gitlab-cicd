@@ -9,7 +9,7 @@ include:
 # eg:
 # include:
 #   - project: automation/testing/molecule-templates
-#     version: ${latest project version}
+#     ref: ${latest project version}
 #     file: ansible-molecule.gitlab-ci.yml
 # stages:
 #   - test

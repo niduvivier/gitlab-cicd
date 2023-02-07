@@ -5,7 +5,7 @@
 # eg:
 # include:
 #   - project: automation/cicd/templates
-#     version: ${latest project version}
+#     ref: ${latest project version}
 #     file: jobs/testing/ansible/ansible-testing.gitlab-ci.yml
 # stages:
 #   - test

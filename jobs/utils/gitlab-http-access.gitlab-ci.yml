@@ -11,7 +11,7 @@
 # eg.:
 #  include:
 #    - project: automation/cicd/templates
-#      version: ${project latest version}
+#      ref: ${project latest version}
 #      file: jobs/utils/gitlab-http-access.gitlab-ci.yml
 #  job1:
 #    extends: .gitlab_http_access

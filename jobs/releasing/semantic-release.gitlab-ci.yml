@@ -3,7 +3,7 @@
 include:
   - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
 
-# Use this job template to provide automated samentic version tags and gitlab releases
+# Use this job template to provide automated semantic version tags and gitlab releases
 # for you projects
 #
 # Use this job template by including this file from the project
@@ -12,7 +12,7 @@ include:
 # eg.:
 # include:
 #   - project: automation/cicd/templates
-#     version: ${latest project release version}
+#     ref: ${latest project release version}
 #     file: jobs/releasing/semantic-release.gitlab-ci.yml
 # stages:
 #   - release

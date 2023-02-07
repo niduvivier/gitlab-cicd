@@ -5,7 +5,7 @@
 # eg.:
 #  include:
 #    - project: automation/cicd/templates
-#      version: ${project latest version}
+#      ref: ${project latest version}
 #      file: services/docker-dind.gitlab-ci.yml
 #  job1:
 #    extends: .docker-dind
