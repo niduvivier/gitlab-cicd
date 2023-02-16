@@ -6,6 +6,18 @@ include:
 # Use this job template to provide automated semantic version tags and gitlab releases
 # for you projects
 #
+# Use of this job requires the user `semantic-release-bot` to have Developer level
+# access to your project. Currently it is recommended for simplicity to give that user too
+# much access rights by adding it as a direct member of one of your top level groups.
+# This users long lived personal access token is defined as an instance wide CI variable.
+#
+# NOTE: This is open for change, dependening of the outcome of several upstream fixes:
+#   - gitlab: allow CI_JOB_TOKEN to have write access
+#   - semantic-release: do not verifyAuth on git tag (git write access)
+#     when using gitlab releases
+# NOTE: might even become unworkable if one of previous items is not fixed and gitlab is updated
+#       to v16, which disables PAT's without expiry.
+#
 # Use this job template by including this file from the project
 # and defining the release stage
 #
