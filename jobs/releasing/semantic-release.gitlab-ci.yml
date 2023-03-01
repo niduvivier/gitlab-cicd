@@ -30,20 +30,22 @@ include:
 #   - release
 
 semantic-release:
-  extends:
-    - .gitlab_http_access
   variables:
     SEMANTIC_RELEASE_USER: semantic-release-bot
     SEMANTIC_RELEASE_AUTH: ${SEMANTICRELEASE_TOKEN}
     GITLAB_USERNAME: ${SEMANTIC_RELEASE_USER}
     GITLAB_USERAUTH: ${SEMANTIC_RELEASE_AUTH}
+    NPM_TOKEN: ${YARN_AUTH_TOKEN}
+    NPM_CONFIG_REGISTRY: ${NEXUS_URL}/repository/npm-internal
+    GL_TOKEN: ${SEMANTICRELEASE_TOKEN}
   image: $REGISTRY/semantic-release
   stage: release
+  before_script:
+    - !reference [.gitlab_http_access, before_script]
   script:
-    - GL_TOKEN=${SEMANTICRELEASE_TOKEN} semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
+    - semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
   rules:
-    - if: $CI_DEFAULT_BRANCH == $CI_COMMIT_BRANCH
-    - if: $CI_COMMIT_BRANCH =~ /^(alpha|beta|next|next-major)$/
-    - if: $CI_COMMIT_BRANCH =~ /^(stable-)?v?([0-9]+)(\.([0-9]+|x))?\.x$/
+    - if: $GITLAB_USER_LOGIN == 'semantic-release-bot'
+      when: never
 
 ...
