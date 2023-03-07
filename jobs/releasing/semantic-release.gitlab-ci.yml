@@ -45,7 +45,6 @@ semantic-release:
   script:
     - semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
   rules:
-    - if: $GITLAB_USER_LOGIN == 'semantic-release-bot'
-      when: never
+    - if: $GITLAB_USER_LOGIN != 'semantic-release-bot'
 
 ...
