@@ -38,7 +38,5 @@ molecule:
         molecule ${MOLECULE_CMD_OPTS} test --scenario-name "${scenario}" ${MOLECULE_TEST_CMD_OPTS}
         echo " ------- END: Running scenario ${scenario} ------- "
       done
-  rules:
-    - when: never
 
 ...
