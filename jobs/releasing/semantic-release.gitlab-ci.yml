@@ -46,5 +46,8 @@ semantic-release:
     - semantic-release --extends @enttribe/semantic-release-config --repository-url "${GITLAB_AUTHENTICATED_REPO_URL}"
   rules:
     - if: $GITLAB_USER_LOGIN != 'semantic-release-bot'
+  artifacts:
+    reports:
+      dotenv: version.env
 
 ...
