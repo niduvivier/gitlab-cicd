@@ -1,6 +1,10 @@
 ---
 
-# This job template can be used to build containers from Dockerfiles using kaniko
+include:
+  - local: jobs/building/containers/kaniko.gitlab-ci.yml
+  - local: jobs/utils/aws/aws-ecr-login.gitlab-ci.yml
+
+# This job template can be used to build containers from Dockerfiles using kaniko and authenticate against ECR
 #
 # KANIKO_COMMAND should contain anything you need:
 #   - proxy settings as build-arg's
@@ -17,24 +21,27 @@
 #  include:
 #    - project: automation/cicd/templates
 #      ref: ${project latest version}
-#      file: jobs/building/containers/kaniko.gitlab-ci.yml
+#      file: jobs/building/containers/kaniko-ecr.gitlab-ci.yml
 #  stages:
 #    - build
 #  job1:
-#    extends: .kaniko
+#    extends: .kaniko_ecr
 #    script:
 #      - ${KANIKO_COMMAND} --dockerfile Dockerfile --build-arg something=true --destination $REGISTRY/<namespace>/<container_id>:<tag>
 
-.kaniko:
+.kaniko_ecr:
+  extends:
+    - .aws_ecr_login
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   before_script:
+    - !reference [.aws_ecr_login, before_script]
     - |-
        mkdir -p /kaniko/.docker
        KANIKOPROXYBUILDARGS=""
-       KANIKOCFG="{ \"auths\":{\"$REGISTRY\":{\"username\":\"$NEXUS_USER\",\"password\":\"$NEXUS_PASS\"}}"
+       KANIKOCFG="{ \"auths\":{\"${ECR_REGISTRY}\":{\"username\":\"${ECR_USERNAME}\",\"password\":\"${ECR_PASSWORD}\"}}"
        if [ "x${HTTP_PROXY}" != "x" -o "x${HTTPS_PROXY}" != "x" ]; then
          KANIKOCFG="${KANIKOCFG}, \"proxies\": { \"default\": { \"httpProxy\": \"${HTTP_PROXY}\", \"httpsProxy\": \"${HTTPS_PROXY}\", \"noProxy\": \"${NO_PROXY}\"}}"
          KANIKOPROXYBUILDARGS="${KANIKOPROXYBUILDARGS} --build-arg http_proxy=${HTTP_PROXY} --build-arg https_proxy=${HTTPS_PROXY} --build-arg no_proxy=${NO_PROXY}"

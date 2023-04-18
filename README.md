@@ -12,6 +12,8 @@ Find a list of all available content beneath. Specific documenation and usage of
 
 - [building/containers/kaniko](./jobs/building/containers/kaniko.gitlab-ci.yml)
   Job Template: Build Dockerfile projects and push to local registry
+- [building/containers/kaniko-ecr](./jobs/building/containers/kaniko-ecr.gitlab-ci.yml)
+  Job Template: Build Dockerfile projects and push to ECR registry
 - [building/containers/kaniko-matrix](./building/containers/kaniko-matrix.gitlab-ci.yml)
   Job Template: Build Dockerfile projects parallel over a currated set of supported OSes
 - [releasing/semantic-release](./jobs/releasing/semantic-release.gitlab-ci.yml)
@@ -29,6 +31,10 @@ Find a list of all available content beneath. Specific documenation and usage of
   Job Utility: Relay any gitlab url to an authenticated (default using CI_JOB_TOKEN) http url
 - [utils/supported-os-matrix](./jobs/utils/supported-os-matrix.gitlab-ci.yml)
   Job Utility: Provides parallel parameters to run over a currated set of support OSes (centos7, rockylinux8 and 9 eg)
+- [utils/aws/aws-assume-role](./jobs/utils/aws/aws-assume-role.gitlab-ci.yml)
+  Job Utility: Provides a way of not storeing long lived credentials in Gitlab, though foresee jobs with short lived session credentials
+- [utils/aws/aws-ecr-login](./jobs/utils/aws/aws-ecr-login.gitlab-ci.yml)
+  Job Utility: Provides a way of retrieving ECR token to authenticate kaniko/docker
 
 
 ### Pipelines, Pipeline Templates
