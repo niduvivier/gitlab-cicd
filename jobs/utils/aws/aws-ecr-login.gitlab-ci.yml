@@ -1,0 +1,40 @@
+---
+
+# This job template can be used to retrieve an ECR login token
+# Note: image used for the job extending this template requires `curl` to be present
+# It will require input:
+# - ARS_AWS_PROFILE: the central profile name used for config/credentials
+# Optional:
+# - ARS_ROLE_TO_ASSUME: full ARN of the AWS Role to assume (default empty)
+# - AWS_REGION: AWS region name where your registry resides (default: eu-central-1)
+#
+# ARS_ROLE_TO_ASSUME: when not configured (aka left empty) a full login against the long lived 
+# credentials stored in ARS service will be performed. When a role is provided, first an STS/AssumeRole call
+# is made and ECR login is retrieved using short lived credentials.
+# 
+# The template will provide you with some required environment variables to use in eg docker login
+#
+# The job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      ref: ${project latest version}
+#      file: jobs/utils/aws-ecr-login.gitlab-ci.yml
+#  job1:
+#    extends:
+#      - .aws_ecr_login
+#    script:
+#      - docker login --username "${ECR_USERNAME}" --password "${ECR_PASSWORD}" "${ECR_REGISTRY}"
+
+.aws_ecr_login
+  variables:
+    ARS_AWS_PROFILE: ""
+    ARS_AWS_ROLE_TO_ASSUME: ""
+    AWS_REGION: "eu-central-1"
+    ARS_PAYLOAD: "{\"role-to-assume\":\"${ARS_AWS_ROLE_TO_ASSUME}\",\"ci-job-token\":\"${CI_JOB_TOKEN}\",\"aws-profile\":\"${ARS_AWS_PROFILE}\", \"AWS_REGION\": \"${AWS_REGION}\"}"
+    ARS_ENDPOINT: 'http://nomad.dev.yelo.inet.telenet.be/ars/ecrlogin'
+  before_script:
+    - curl -XPOST -s "${ARS_ENDPOINT}" -H 'Content-Type:application/json' -d "${ARS_PAYLOAD}" -o .env
+    - export $(cat .env | xargs)
+
+...
