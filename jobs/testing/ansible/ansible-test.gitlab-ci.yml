@@ -15,7 +15,7 @@ variables:
 
 .ansible-test-prereq:
   stage: test
-  image: $REGISTRY/ansible/molecule
+  image: $REGISTRY/automation/containers/ansible-molecule:production
   before_script:
     - pip install -r tests/**/requirements.txt || true
     - |-
