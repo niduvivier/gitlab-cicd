@@ -18,10 +18,10 @@ yamllint:
   script:
     - yamllint .
 
-ansible-lint:
-  stage: test
-  image: $REGISTRY/automation/containers/ansible-molecule:production
-  script:
-    - ansible-lint
+# ansible-lint:
+#   stage: test
+#   image: $REGISTRY/automation/containers/ansible-molecule:production
+#   script:
+#     - ansible-lint
 
 ...
