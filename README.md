@@ -16,12 +16,15 @@ Find a list of all available content beneath. Specific documenation and usage of
   Job Template: Build Dockerfile projects parallel over a currated set of supported OSes
 - [releasing/semantic-release](./jobs/releasing/semantic-release.gitlab-ci.yml)
   Job: Create a semantic versioned gitlab release + git tag based on conventional commits
+- [testing/ansible/ansible-lint](./testing/ansible/ansible-lint.gitlab-ci.yml)
+  Job: Run ansible-lint and yamllint tool over ansible content
 - [testing/ansible/ansible-molecule](./testing/ansible/ansible-molecule.gitlab-ci.yml)
   Job: Run Molecule tool over a list of scenario's to test an ansible role
 - [testing/ansible/ansible-test](./jobs/testing/ansible/ansible-test.gitlab-ci.yml)
   Jobs: Run different steps using ansible-test tool
     - ansible-test sanity: linting basically (python, yaml, ...)
     - ansible-test unit: unit test your python based ansible modules/plugins/...
+  WARN: due to recent issues it is not recommended to use this!!
 - [utils/gitlab-http-access](./jobs/utils/gitlab-http-access.gitlab-ci.yml)
   Job Utility: Relay any gitlab url to an authenticated (default using CI_JOB_TOKEN) http url
 - [utils/supported-os-matrix](./jobs/utils/supported-os-matrix.gitlab-ci.yml)
@@ -32,6 +35,7 @@ Find a list of all available content beneath. Specific documenation and usage of
 
 - [ansible](./pipelines/ansible.gitlab-ci.yml)
   Pipeline: Run all related steps to building, testing and releasing ansible content
+  WARN: currently ansible-test include has been disabled
 
 
 ### Services

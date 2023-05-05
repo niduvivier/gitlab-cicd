@@ -1,0 +1,27 @@
+---
+
+# This job requires the user to include this job template
+# This job requires the user to define the test stage in his pipeline
+# This job is meant as a replacement for linting by ansible-test (disabled) and
+# molecule (removing lint from its set of test steps)
+# eg:
+# include:
+#   - project: automation/testing/molecule-templates
+#     ref: ${latest project version}
+#     file: ansible-lint.gitlab-ci.yml
+# stages:
+#   - test
+
+yamllint:
+  stage: test
+  image: $REGISTRY/automation/containers/ansible-molecule:production
+  script:
+    - yamllint .
+
+ansible-lint:
+  stage: test
+  image: $REGISTRY/automation/containers/ansible-molecule:production
+  script:
+    - ansible-lint
+
+...
