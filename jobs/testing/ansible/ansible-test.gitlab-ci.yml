@@ -24,7 +24,7 @@ variables:
 
       NAMESPACE=local
       NAME=fake
-      PREFIX=/tmp/ansible_collections
+      PREFIX=/opt/ansible_collections
       COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
       
       if [[ -f "galaxy.yml" ]]
