@@ -17,6 +17,9 @@
 #  job1:
 #    extends:
 #      - .aws_assume_role
+#    variables:
+#      ARS_AWS_PROFILE: "<team>-<aws env>"
+#      ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam:<id>:role/<role_name>"
 #    script:
 #      - # Do Something against AWS
 #      - /bin/true

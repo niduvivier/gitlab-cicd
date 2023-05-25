@@ -23,6 +23,9 @@
 #  job1:
 #    extends:
 #      - .aws_ecr_login
+#    variables:
+#      ARS_AWS_PROFILE: "<team>-<aws env>"
+#      ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam:<id>:role/<role_name>"
 #    script:
 #      - docker login --username "${ECR_USERNAME}" --password "${ECR_PASSWORD}" "${ECR_REGISTRY}"
 
