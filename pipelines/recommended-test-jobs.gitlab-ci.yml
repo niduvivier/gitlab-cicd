@@ -1,0 +1,19 @@
+---
+
+# This pipeline template is intended to be referenced as an include in a project
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: pipelines/recommended-test-jobs.gitlab-ci.yml
+
+include:
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Code-Quality.gitlab-ci.yml
+  - local: /jobs/testing/qa/sonarqube.gitlab-ci.yml
+
+stages:
+  - test
+
+...

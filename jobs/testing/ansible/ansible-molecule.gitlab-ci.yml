@@ -25,6 +25,8 @@ molecule:
     MOLECULE_TEST_CMD_OPTS: ''
   parallel: 4
   stage: test
+  tags:
+    - molecule
   image: $REGISTRY/automation/containers/ansible-molecule:production
   script:
     - |-

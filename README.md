@@ -27,6 +27,9 @@ Find a list of all available content beneath. Specific documenation and usage of
     - ansible-test sanity: linting basically (python, yaml, ...)
     - ansible-test unit: unit test your python based ansible modules/plugins/...
   WARN: due to recent issues it is not recommended to use this!!
+- [testing/qa/sonarqube](./jobs/testing/qa/sonarqube.gitlab-ci.yml)
+  Job: Run sonarqube against your project, ith easy to start filled in properties
+    additional properties can be provided via a variable or sonar-project.properties file
 - [utils/gitlab-http-access](./jobs/utils/gitlab-http-access.gitlab-ci.yml)
   Job Utility: Relay any gitlab url to an authenticated (default using CI_JOB_TOKEN) http url
 - [utils/supported-os-matrix](./jobs/utils/supported-os-matrix.gitlab-ci.yml)
@@ -42,6 +45,8 @@ Find a list of all available content beneath. Specific documenation and usage of
 - [ansible](./pipelines/ansible.gitlab-ci.yml)
   Pipeline: Run all related steps to building, testing and releasing ansible content
   WARN: currently ansible-test include has been disabled
+- [recommended-test-jobs](./pipelines/recommended-test-jobs.gitlab-ci.yml)
+  Pipeline: Run recommended set of tests, mostly in regards to security and code quality
 
 
 ### Services

@@ -1,0 +1,94 @@
+---
+
+# This job requires the user to include this job template
+# This job requires the user to define the test stage in his pipeline
+# (or override the stage of this job)
+#
+# Provided variables for user behavior
+#   - name: SONAR_PROJECT_TAGS
+#     default value: ''
+#     description: It is recommended at least to put in a team id
+#                  eg 'CoreBE'
+#                  it can contain many more tags, provide this variable
+#                  with comma separated list of tags (pre-url escaped for other characters!)
+#   - name: SONAR_USE_TEST_ENVRIONMENT
+#     default_value: "false"
+#     description: when set to "true" (as string!) it will select our test sonarqube instance
+#                  to do the scanning against.
+#   - name: SONAR_SCANNER_ADDITIONAL_OPTS
+#     default_value: ''
+#     description: Can contain extra -Dsonar.xxx variables to pass to sonar-canner cli.
+#   - name: SONAR_PROJECT_KEY
+#     default_value: 'project-$CI_PROJECT_ID'
+#     description: The unique id in sonarqube for your project
+#                  If you have an active project in sonarqube you can manually migrate the id
+#                  in sonarqube web ui via your Project > Project Settings > Update Key
+#   - name: SONAR_PROJECT_NAME
+#     default_value: 'CI_PROJECT_PATH'
+#     description: The name of your project, displayed in sonarqube ui
+#
+#
+# NOTES:
+#   - commonly you might want to assign 'needs' (previous jobs) to sonarqube job (pass coverage analysis eg)
+#   - rules:when will soon change to always, though various use cases will require you to override eg non-blocking on features, ...
+#     but this is heavily dependable on your way of working (eg gitflow vs trunk based, ...), so this has not been forseen here.
+#
+# eg:
+# include:
+#   - project: automation/testing/molecule-templates
+#     ref: ${latest project version}
+#     file: jobs/testing/qa/sonarqube.gitlab-ci.yml
+#
+# stages:
+#   - test
+#
+# sonarqube:
+#   variables:
+#     SONARQUBE_PROJECT_TAGS: "<team>"
+
+sonarqube:
+  stage: test
+  variables:
+    SONAR_PROJECT_TAGS: ""
+    SONAR_USE_TEST_ENVIRONMENT: "false"
+  image: 
+    name: sonarsource/sonar-scanner-cli:4
+    entrypoint: [""]
+  allow_failure: false
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - |-
+      if [ "$SONAR_USE_TEST_ENVIRONMENT" == "true" ]
+      then
+        SONAR_HOST_URL=${SONARQUBE_TEST_URL}
+        SONAR_TOKEN=${SONARQUBE_TEST_TOKEN}
+      else
+        SONAR_HOST_URL=SONAR_URL
+      fi
+      if [ "$SONAR_PROJECT_KEY" != "" ]
+      then
+        SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY/[^a-zA-Z0-9-_\.]/.}
+      else
+        SONAR_PROJECT_KEY="project-$CI_PROJECT_ID"
+      fi
+      if [ "$SONAR_PROJECT_NAME" == "" ]
+      then
+        SONAR_PROJECT_NAME=$CI_PROJECT_PATH
+      fi
+      git fetch --unshallow
+    - >
+      sonar-scanner
+      -Dsonar.projectKey=$SONAR_PROJECT_KEY
+      -Dsonar.projectName=$SONAR_PROJECT_NAME
+      -Dsonar.qualitygate.wait=true
+      -Dsonar.projectCreation.mainBranchName=$CI_DEFAULT_BRANCH
+      -X
+      ${SONAR_SCANNER_ADDITIONAL_OPTS}
+    - |-
+      if [ "$SONAR_PROJECT_TAGS" != "" ]
+      then
+        curl -w '%{http_code}' -o /dev/null -sS -u "$SONAR_TOKEN:" -XPOST "$SONAR_URL/api/project_tags/set?project=$SONAR_PROJECT_KEY&tags=$SONAR_PROJECT_TAGS" 
+      fi
+
+...
