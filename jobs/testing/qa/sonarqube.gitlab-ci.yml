@@ -64,7 +64,8 @@ sonarqube:
         SONAR_HOST_URL=${SONARQUBE_TEST_URL}
         SONAR_TOKEN=${SONARQUBE_TEST_TOKEN}
       else
-        SONAR_HOST_URL=SONAR_URL
+        SONAR_HOST_URL=${SONARQUBE_PROD_URL}
+        SONAR_TOKEN=${SONARQUBE_PROD_TOKEN}
       fi
       if [ "$SONAR_PROJECT_KEY" != "" ]
       then
@@ -88,7 +89,7 @@ sonarqube:
     - |-
       if [ "$SONAR_PROJECT_TAGS" != "" ]
       then
-        curl -w '%{http_code}' -o /dev/null -sS -u "$SONAR_TOKEN:" -XPOST "$SONAR_URL/api/project_tags/set?project=$SONAR_PROJECT_KEY&tags=$SONAR_PROJECT_TAGS" 
+        curl -w '%{http_code}' -o /dev/null -sS -u "$SONAR_TOKEN:" -XPOST "$SONAR_HOST_URL/api/project_tags/set?project=$SONAR_PROJECT_KEY&tags=$SONAR_PROJECT_TAGS" 
       fi
 
 ...
