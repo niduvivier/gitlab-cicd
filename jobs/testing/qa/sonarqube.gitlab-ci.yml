@@ -35,7 +35,7 @@
 #
 # eg:
 # include:
-#   - project: automation/testing/molecule-templates
+#   - project: automation/cicd/templates
 #     ref: ${latest project version}
 #     file: jobs/testing/qa/sonarqube.gitlab-ci.yml
 #

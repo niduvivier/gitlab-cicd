@@ -6,7 +6,7 @@
 # molecule (removing lint from its set of test steps)
 # eg:
 # include:
-#   - project: automation/testing/molecule-templates
+#   - project: automation/cicd/templates
 #     ref: ${latest project version}
 #     file: ansible-lint.gitlab-ci.yml
 # stages:

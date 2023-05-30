@@ -8,7 +8,7 @@ include:
 # This job requires the user to define the test stage in his pipeline
 # eg:
 # include:
-#   - project: automation/testing/molecule-templates
+#   - project: automation/cicd/templates
 #     ref: ${latest project version}
 #     file: ansible-molecule.gitlab-ci.yml
 # stages:
