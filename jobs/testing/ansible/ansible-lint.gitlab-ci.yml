@@ -14,13 +14,13 @@
 
 yamllint:
   stage: test
-  image: $REGISTRY/automation/containers/ansible-molecule:production
+  image: $REGISTRY/automation/containers/ansible-molecule:ansible8-python3.9-latest
   script:
     - yamllint .
 
 # ansible-lint:
 #   stage: test
-#   image: $REGISTRY/automation/containers/ansible-molecule:production
+#   image: $REGISTRY/automation/containers/ansible-molecule:ansible8-python3.9-latest
 #   script:
 #     - ansible-lint
 
