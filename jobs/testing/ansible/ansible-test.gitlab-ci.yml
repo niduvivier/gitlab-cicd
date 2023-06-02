@@ -111,6 +111,7 @@ ansible-units:
   script:
     - cd $COLLECTION_PATH
     - ansible-test units --local --coverage
+    - git status
   # TODO archive coverage
   # TODO --local to --docker default (network issues for install requirements + python2.x)
 
