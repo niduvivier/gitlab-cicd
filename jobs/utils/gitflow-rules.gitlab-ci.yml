@@ -1,0 +1,51 @@
+---
+
+# This job template can be used to provide a set of job rules that can be added to jobs
+# The rules defined in this file are common practice rules for gitflow branch model 
+# various subsets of these rules can be required to add to various stages.
+# when adding to rules (eg when certain file patterns exist), make sure you use the correct
+# order of rules.
+#
+# This job template is ment to be included and extended as part of another job
+# eg.:
+#  include:
+#    - project: automation/cicd/templates
+#      ref: ${project latest version}
+#      file: jobs/utils/gitflow-rules.gitlab-ci.yml
+#  job1:
+#    extends: .gitflow_test_rules
+#    stage: test
+#    script:
+#      - /bin/true
+
+.on_default_branch:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+.on_merge_requests:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+.on_tags:
+  - if: $CI_COMMIT_TAG
+
+.not_on_tags:
+  - if: $CI_COMMIT_TAG
+    when: never
+
+.do_not_run:
+  - when: never
+
+.gitflow_release_rules:
+  rules:
+    - !reference [.on_default_branch]
+    - !reference [.do_not_run]
+
+.gitflow_test_rules:
+  rules:
+    - !reference [.not_on_tags]
+    - !reference [.on_merge_requests]
+    - !reference [.on_default_branch]
+    # run on any other branch
+    - if: $CI_COMMIT_BRANCH
+    - !reference [.do_not_run]
+
+...

@@ -1,5 +1,9 @@
 ---
 
+include:
+  - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
+  - local: /jobs/utils/gitflow-rules.gitlab-ci.yml
+
 # This job requires the user to include this job template
 # This job requires the user to define the test stage in his pipeline
 # This job is meant as a replacement for linting by ansible-test (disabled) and
@@ -13,14 +17,19 @@
 #   - test
 
 yamllint:
+  extends:
+    - .gitflow_test_rules
   stage: test
-  image: $REGISTRY/automation/containers/ansible-molecule:ansible8-python3.9-latest
+  image: $REGISTRY/automation/containers/ansible-molecule:production
   script:
     - yamllint .
 
 ansible-lint:
+  extends:
+    - .gitlab_http_access
+    - .gitflow_test_rules
   stage: test
-  image: $REGISTRY/automation/containers/ansible-molecule:ansible8-python3.9-latest
+  image: $REGISTRY/automation/containers/ansible-molecule:production
   script:
     - ansible-lint
 

@@ -14,14 +14,20 @@ include:
   - local: /jobs/testing/ansible/ansible-molecule.gitlab-ci.yml
   - local: /jobs/testing/ansible/ansible-test.gitlab-ci.yml
   - local: /jobs/releasing/semantic-release.gitlab-ci.yml
+  - local: /jobs/utils/gitflow-rules.gitlab-ci.yml
 
 stages:
   - test
   - release
 
 sonarqube:
+  allow_failure: true
+  rules: !reference [.gitflow_test_rules, rules]
   needs:
     - job: ansible-coverage
       artifacts: true
+
+semantic-release:
+  rules: !reference [.gitflow_release_rules, rules] 
 
 ...
