@@ -13,20 +13,25 @@
 variables:
   COLLECTION_PATH: '$${COLLECTION_PATH}'
 
+.ansible-test-env:
+   before_script:
+     - |-
+      NAMESPACE=local
+      NAME=fake
+      PREFIX=/opt/ansible_collections
+      COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
+      eval export COLLECTION_PATH=$COLLECTION_PATH
+
 .ansible-test-prereq:
   stage: test
   image: $REGISTRY/automation/containers/ansible-molecule:ansible8-python3.9-latest
   before_script:
     - pip install -r tests/**/requirements.txt || true
+    - !reference [.ansible-test-env, before_script]
     - |-
       #!/bin/bash
       set -xv
 
-      NAMESPACE=local
-      NAME=fake
-      PREFIX=/opt/ansible_collections
-      COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
-      
       if [[ -f "galaxy.yml" ]]
       then
         NAMESPACE=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["namespace"])')
@@ -72,8 +77,9 @@ variables:
       ..." > galaxy.yml
 
       fi
-
-      eval export COLLECTION_PATH=$COLLECTION_PATH
+  artifacts:
+    paths:
+      - test/output/
 
 
 ansible-sanity:
@@ -85,7 +91,7 @@ ansible-sanity:
     - cd $COLLECTION_PATH
     - rm -rf roles/fake/.venv
     - rm -rf roles/fake/.git
-    - ansible-test sanity --local
+    - ansible-test sanity --local --coverage
     # but docker default should be looked into to get it to work
     #  => untested, but moving to ansible-core 2.12 (ansible 5.x) might fix
     #     cfr https://github.com/ansible/ansible/commit/b752d071633d244f98f327306e160f7915f38829
@@ -110,8 +116,27 @@ ansible-units:
         - tests/unit/**/*.py
   script:
     - cd $COLLECTION_PATH
-    - ansible-test units --local --coverage
-  # TODO archive coverage
+    - ansible-test units --local --coverage --python 3.9
+  artifacts:
+    reports:
+      junit: tests/output/junit/python3.9-modules-unit.xml
   # TODO --local to --docker default (network issues for install requirements + python2.x)
+
+ansible-coverage:
+  image: $REGISTRY/automation/containers/ansible-molecule:ansible8-python3.9-latest
+  needs:
+    - job: ansible-sanity
+      artifacts: true
+    - job: ansible-units
+      artifacts: true
+  before_script:
+    - !reference [.ansible-test-env, before_script]
+  script:
+    - cd $COLLECTION_PATH
+    - ansible-test coverage xml
+  artifacts:
+    reports:
+      coverage_report:
+        path: tests/output/reports/coverage.xml
 
 ...
