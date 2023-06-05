@@ -1,5 +1,8 @@
 ---
 
+include:
+  - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
+
 # This job requires the user to include this job template
 # This job requires the user to define the test stage in his pipeline
 # This job is meant as a replacement for linting by ansible-test (disabled) and
@@ -12,16 +15,24 @@
 # stages:
 #   - test
 
-yamllint:
+ansible-lint:
+  extends:
+    - .gitlab_http_access
+  rules:
+    # Do not run on tags
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Run on MR's
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Run on default branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # Run on any other branch
+    - if: $CI_COMMIT_BRANCH
+    # do not run otherwise
+    - when: never
   stage: test
   image: $REGISTRY/automation/containers/ansible-molecule:production
   script:
-    - yamllint .
-
-# ansible-lint:
-#   stage: test
-#   image: $REGISTRY/automation/containers/ansible-molecule:production
-#   script:
-#     - ansible-lint
+    - ansible-lint
 
 ...

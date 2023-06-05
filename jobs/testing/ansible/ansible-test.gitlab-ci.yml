@@ -13,20 +13,37 @@
 variables:
   COLLECTION_PATH: '$${COLLECTION_PATH}'
 
+.ansible-test-env:
+  before_script:
+    - |-
+      NAMESPACE=local
+      NAME=fake
+      PREFIX=/opt/ansible_collections
+      COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
+      eval export COLLECTION_PATH=$COLLECTION_PATH
+
 .ansible-test-prereq:
   stage: test
+  rules:
+    # Do not run on tags
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Run on MR's
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Run on default branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # Run on any other branch
+    - if: $CI_COMMIT_BRANCH
+    # do not run otherwise
+    - when: never
   image: $REGISTRY/automation/containers/ansible-molecule:production
   before_script:
+    - !reference [.ansible-test-env, before_script]
     - pip install -r tests/**/requirements.txt || true
     - |-
       #!/bin/bash
       set -xv
 
-      NAMESPACE=local
-      NAME=fake
-      PREFIX=/opt/ansible_collections
-      COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
-      
       if [[ -f "galaxy.yml" ]]
       then
         NAMESPACE=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["namespace"])')
@@ -66,39 +83,43 @@ variables:
         [[ -d "templates" ]] && cp -R ./templates $COLLECTION_PATH/roles/fake/
         [[ -d "vars" ]] && cp -R ./vars $COLLECTION_PATH/roles/fake/
 
-        cd ${COLLECTION_PATH}
         echo "---
       version: 0.0.1
-      ..." > galaxy.yml
+      ..." > "${COLLECTION_PATH}/galaxy.yml"
 
       fi
-
-      eval export COLLECTION_PATH=$COLLECTION_PATH
-
+    - cd $COLLECTION_PATH
+  after_script:
+    - !reference [.ansible-test-env, before_script]
+    - |-
+      if [[ -d "${COLLECTION_PATH}/tests/output" ]];
+      then
+        cp -R "${COLLECTION_PATH}/tests/output" "${CI_PROJECT_DIR}/tests/"
+      fi
+  artifacts:
+    paths:
+      - tests/output/
 
 ansible-sanity:
   extends:
     - .ansible-test-prereq
   allow_failure: true
   script:
-    # local will only have python 3.9
-    - cd $COLLECTION_PATH
-    - rm -rf roles/fake/.venv
-    - rm -rf roles/fake/.git
-    - ansible-test sanity --local
-    # but docker default should be looked into to get it to work
-    #  => untested, but moving to ansible-core 2.12 (ansible 5.x) might fix
-    #     cfr https://github.com/ansible/ansible/commit/b752d071633d244f98f327306e160f7915f38829
-    #     which removes to function get_docker_networks which currently fails
-    #- ansible-test sanity --docker default
-
+    - mkdir -p /root/.ansible/test/cache
+    - curl -sSL "https://ci-files.testing.ansible.com/ansible-test/get-pip-21.3.1.py" -o /root/.ansible/test/cache/get_pip_21_3_1.py
+    - pip config set global.proxy "${http_proxy}"
+    - ansible-test sanity --coverage --local
 
 ansible-units:
   extends:
     - .ansible-test-prereq
-  services: []
   rules:
-    - exists:
+    # Do not run on tags
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Run on MR's
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      exists: &ansible_python_files
         - '*_plugins/*.py'
         - '*_plugins/**/*.py'
         - library/*.py
@@ -108,10 +129,40 @@ ansible-units:
         - plugins/**/*.py
         - tests/unit/*.py
         - tests/unit/**/*.py
+    # Run on default branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      exists: *ansible_python_files
+    # Run on any other branch
+    - if: $CI_COMMIT_BRANCH
+      exists: *ansible_python_files
+    # do not run otherwise
+    - when: never
   script:
-    - cd $COLLECTION_PATH
-    - ansible-test units --local --coverage
-  # TODO archive coverage
-  # TODO --local to --docker default (network issues for install requirements + python2.x)
+    - ansible-test units --local --coverage --python 3.9
+  artifacts:
+    reports:
+      junit: tests/output/junit/python3.9-units.xml
+
+ansible-coverage:
+  extends:
+    - .ansible-test-prereq
+  needs:
+    - job: ansible-sanity
+      artifacts: true
+      optional: true
+    - job: ansible-units
+      artifacts: true
+      optional: true
+  script:
+    - |-
+      if [[ -d "tests/output/coverage" ]]
+      then
+        ansible-test coverage xml
+      fi
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: tests/output/reports/coverage.xml
 
 ...

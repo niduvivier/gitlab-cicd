@@ -5,26 +5,39 @@ include:
   - local: /services/docker-dind.gitlab-ci.yml
 
 # This job requires the user to include this job template
-# This job requires the user to define the test stage in his pipeline
+# This job requires the user to define the integration stage in his pipeline
 # eg:
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
 #     file: ansible-molecule.gitlab-ci.yml
 # stages:
-#   - test
+#   - integration
 
 molecule:
   extends:
     - .gitlab_http_access
     - .docker-dind
+  rules:
+    # Do not run on tags
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Run on MR's
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Run on default branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # Run on any other branch when triggered
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+    # do not run otherwise
+    - when: never
   variables:
     ANSIBLE_FORCE_COLOR: 'true'
     ANSIBLE_DIFF_ALWAYS: 'true'
     MOLECULE_CMD_OPTS: ''
     MOLECULE_TEST_CMD_OPTS: ''
   parallel: 4
-  stage: test
+  stage: integration
   tags:
     - molecule
   image: $REGISTRY/automation/containers/ansible-molecule:production
