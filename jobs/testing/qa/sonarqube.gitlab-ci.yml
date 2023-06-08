@@ -77,7 +77,6 @@ sonarqube:
       -Dsonar.projectKey=$SONAR_PROJECT_KEY
       -Dsonar.projectName=$SONAR_PROJECT_NAME
       -Dsonar.qualitygate.wait=true
-      -Dsonar.projectCreation.mainBranchName=$CI_DEFAULT_BRANCH
       -X
       ${SONAR_SCANNER_ADDITIONAL_OPTS}
     - |-
