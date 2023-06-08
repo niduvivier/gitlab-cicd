@@ -11,7 +11,7 @@
 #                  eg 'CoreBE'
 #                  it can contain many more tags, provide this variable
 #                  with comma separated list of tags (pre-url escaped for other characters!)
-#   - name: SONAR_USE_TEST_ENVRIONMENT
+#   - name: SONAR_USE_TEST_ENVIRONMENT
 #     default_value: "false"
 #     description: when set to "true" (as string!) it will select our test sonarqube instance
 #                  to do the scanning against.
@@ -44,13 +44,14 @@
 #
 # sonarqube:
 #   variables:
-#     SONARQUBE_PROJECT_TAGS: "<team>"
+#     SONAR_PROJECT_TAGS: "<team>"
 
 sonarqube:
   stage: test
   variables:
     SONAR_HOST_URL: "${SONARQUBE_PROD_URL}"
     SONAR_TOKEN: "${SONARQUBE_PROD_TOKEN}"
+    SONAR_TOKEN_PROV: "${SONARQUBE_PROD_PROVISION_TOKEN}"
     SONAR_USE_TEST_ENVIRONMENT: "false"
     SONAR_PROJECT_KEY: "project-$CI_PROJECT_ID"
     SONAR_PROJECT_NAME: "$CI_PROJECT_PATH"
@@ -67,6 +68,7 @@ sonarqube:
       then
         SONAR_HOST_URL=${SONARQUBE_TEST_URL}
         SONAR_TOKEN=${SONARQUBE_TEST_TOKEN}
+        SONAR_TOKEN_PROV=${SONARQUBE_TEST_PROVISION_TOKEN}
       fi
       SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY/[^a-zA-Z0-9-_\.]/.}
       git fetch --unshallow
@@ -81,7 +83,7 @@ sonarqube:
     - |-
       if [ "$SONAR_PROJECT_TAGS" != "" ]
       then
-        curl -w '%{http_code}' -o /dev/null -sS -u "$SONAR_TOKEN:" -XPOST "$SONAR_HOST_URL/api/project_tags/set?project=$SONAR_PROJECT_KEY&tags=$SONAR_PROJECT_TAGS" 
+        curl -w '%{http_code}' -o /dev/null -sS -u "${SONAR_TOKEN_PROV}:" -X POST "${SONAR_HOST_URL}api/project_tags/set?project=${SONAR_PROJECT_KEY}&tags=${SONAR_PROJECT_TAGS}" 
       fi
 
 ...
