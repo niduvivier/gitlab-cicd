@@ -30,8 +30,11 @@
 #
 # NOTES:
 #   - commonly you might want to assign 'needs' (previous jobs) to sonarqube job (pass coverage analysis eg)
-#   - rules:when will soon change to always, though various use cases will require you to override eg non-blocking on features, ...
-#     but this is heavily dependable on your way of working (eg gitflow vs trunk based, ...), so this has not been forseen here.
+#   - no rules are defined, to allow this job to run on any branch/MR/tag pipeline.
+#     it is up to the developer using this pipeline which workflow he wishes to get sonar reports of.
+#   - allow_failure has been set default to false (aka fail job on sonarqube qa failure response)
+#     it is up to the integration to choose when this job should fail or not
+#     (eg not fail on branch pipelines, but fail on MR/default branch pipeline)
 #
 # eg:
 # include:
@@ -60,8 +63,6 @@ sonarqube:
     name: sonarsource/sonar-scanner-cli:4
     entrypoint: [""]
   allow_failure: false
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   script:
     - |-
       if [ "$SONAR_USE_TEST_ENVIRONMENT" == "true" ]
