@@ -59,6 +59,7 @@ sonarqube:
     SONAR_PROJECT_KEY: "project-$CI_PROJECT_ID"
     SONAR_PROJECT_NAME: "$CI_PROJECT_PATH"
     SONAR_PROJECT_TAGS: ""
+    SONAR_PROJECT_MONOREPO: "false"
   image: 
     name: sonarsource/sonar-scanner-cli:4
     entrypoint: [""]
@@ -85,5 +86,6 @@ sonarqube:
       then
         curl -w '%{http_code}' -o /dev/null -sS -u "${SONAR_TOKEN_PROV}:" -X POST "${SONAR_HOST_URL}api/project_tags/set?project=${SONAR_PROJECT_KEY}&tags=${SONAR_PROJECT_TAGS}" 
       fi
+      curl -w '%{http_code}' -o /dev/null -sS -u "${SONAR_TOKEN_PROV}:" -X POST "${SONAR_HOST_URL}api/alm_settings/set_gitlab_binding?almSetting=${CI_SERVER_HOST}&project=${SONAR_PROJECT_KEY}&repository=${CI_PROJECT_ID}&monorepo=${SONAR_PROJECT_MONOREPO}"
 
 ...
