@@ -1,4 +1,89 @@
 ---
 
+include:
+  - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
+
+# Use this job template to provide automated maven project version tags and gitlab releases
+# for your projects
+# After releasing the build will be uploaded to the registery
+#
+# Use of this job requires the user `maven-release-bot` to have Developer level
+# access to your project. Currently it is recommended for simplicity to give that user too
+# much access rights by adding it as a direct member of one of your top level groups.
+# This users one year lived personal access token is defined as an instance wide CI variable.
+# MAVENRELEASE_TOKEN
+#
+# NOTE: This is open for change, dependening of the outcome of several upstream fixes:
+#   - gitlab: allow CI_JOB_TOKEN to have write access
+#
+# Use this job template by including this file from the project
+# and defining the release stage
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/releasing/maven-release.gitlab-ci.yml
+# stages:
+#   - release
+#
+# Variables that needs to be set
+# maven-release:
+#   variables:
+#     PROJECT_VERSION: "0.0.0|0.0.0-SNAPSHOT"
+#     MAVEN_REPO: "enttribe|yelo|yellowbelt|yb"
+#
+# Other dependencies via pom.xml, adding plugin and configuration in project before adding this in your pipeline
+#
+# <scm>
+#   <connection>scm:git:${project.scm.url}</connection>
+#   <developerConnection>scm:git:${project.scm.url}</developerConnection>
+#   <url><!-- PROJECT CLONE URL --></url>
+#   <tag>0.0.0</tag>
+# </scm>
+#
+#
+# <plugin>
+#   <artifactId>maven-release-plugin</artifactId>
+#   <version>3.0.1</version>
+#     <configuration>
+#       <scmCommentPrefix>[ci skip]</scmCommentPrefix>
+#       <tagNameFormat>@{project.version}</tagNameFormat>
+#     </configuration>
+# </plugin>
+#
+
+maven-release:
+  stage: release
+  variables:
+    MAVEN_RELEASE_USER: maven-release-bot
+    MAVEN_RELEASE_AUTH: ${MAVENRELEASE_TOKEN}
+    GITLAB_USERNAME: ${MAVEN_RELEASE_USER}
+    GITLAB_USERAUTH: ${MAVEN_RELEASE_AUTH}
+    PROJECT_VERSION: ""
+    MAVEN_REPO: ""
+    MAVEN_REPOSITORY: >-
+      -Dmaven.deploy.skip=false
+      -DaltDeploymentRepository=releases::default::http://${NEXUS_USER}:${NEXUS_PASS}@${NEXUS_HOST}/content/repositories/$MAVEN_REPO-releases
+    MAVEN_CLI_OPTS: ""
+    MAVEN_OPTS: ""
+    MAVEN_RELEASE_VARS: >-
+      -Dtag=${PROJECT_VERSION}
+      -DreleaseVersion=${PROJECT_VERSION}
+      -DdevelopmentVersion=0.0.0-SNAPSHOT
+      -DdryRun=false
+      -DgenerateReleasePoms=false 
+  before_script:
+    - !reference [.gitlab_http_access, before_script]
+  cache:
+    paths:
+      - .m2/repository
+    policy: pull-push
+  script:
+    - git config user.email "${MAVEN_RELEASE_USER}@example.com"
+    - git config user.name "${MAVEN_RELEASE_USER}"
+    - git checkout -f $CI_DEFAULT_BRANCH
+    - mvn $MAVEN_CLI_OPTS $MAVEN_OPTS -B release:prepare-with-pom -Darguments="-DskipTests" $MAVEN_RELEASE_VARS
+    - mvn $MAVEN_CLI_OPTS $MAVEN_OPTS -B release:perform -Darguments="-DskipTests $MAVEN_REPOSITORY"
 
 ...
