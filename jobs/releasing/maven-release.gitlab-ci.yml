@@ -65,8 +65,6 @@ maven-release:
     MAVEN_REPOSITORY: >-
       -Dmaven.deploy.skip=false
       -DaltDeploymentRepository=releases::default::http://${NEXUS_USER}:${NEXUS_PASS}@${NEXUS_HOST}/content/repositories/$MAVEN_REPO-releases
-    MAVEN_CLI_OPTS: ""
-    MAVEN_OPTS: ""
     MAVEN_RELEASE_VARS: >-
       -Dtag=${PROJECT_VERSION}
       -DreleaseVersion=${PROJECT_VERSION}
