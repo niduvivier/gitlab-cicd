@@ -32,6 +32,9 @@ include:
 #   variables:
 #     PROJECT_VERSION: "x.x.x"    => !!! Also used as a tag !!!
 #     MAVEN_REPO: "enttribe|yelo|yellowbelt|yb"
+#   cache:
+#     paths:
+#     policy:
 #
 # Other dependencies via pom.xml, adding plugin and configuration in project before adding this in your pipeline
 #
@@ -77,10 +80,6 @@ maven-release:
       -DgenerateReleasePoms=false 
   before_script:
     - !reference [.gitlab_http_access, before_script]
-  cache:
-    paths:
-      - .m2/repository
-    policy: pull-push
   script:
     - git config user.email "${MAVEN_RELEASE_USER}@example.com"
     - git config user.name "${MAVEN_RELEASE_USER}"
