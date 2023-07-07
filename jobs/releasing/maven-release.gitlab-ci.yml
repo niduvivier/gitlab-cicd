@@ -30,10 +30,14 @@ include:
 # Variables that needs to be set
 # maven-release:
 #   variables:
-#     PROJECT_VERSION: "0.0.0|0.0.0-SNAPSHOT"
+#     PROJECT_VERSION: "x.x.x"    => !!! Also used as a tag !!!
 #     MAVEN_REPO: "enttribe|yelo|yellowbelt|yb"
 #
 # Other dependencies via pom.xml, adding plugin and configuration in project before adding this in your pipeline
+#
+# Make sure your project version in the pom file is 0.0.0-SNAPSHOT, if not the release will fail with error
+#
+# org.apache.maven.plugin.MojoFailureException: You don't have a SNAPSHOT project in the reactor projects list.
 #
 # <scm>
 #   <connection>scm:git:${project.scm.url}</connection>
