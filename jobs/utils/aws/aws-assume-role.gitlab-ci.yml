@@ -5,7 +5,7 @@
 # It will require input:
 # - ARS_AWS_PROFILE: the central profile name used for config/credentials
 # - ARS_ROLE_TO_ASSUME: full ARN of the AWS Role to assume
-# 
+#
 # The template will export the resulting short lived session credentials in the environment
 #
 # The job template is ment to be included and extended as part of another job
@@ -24,7 +24,7 @@
 #      - # Do Something against AWS
 #      - /bin/true
 
-.aws_assume_role
+.aws_assume_role:
   variables:
     ARS_AWS_PROFILE: ""
     ARS_AWS_ROLE_TO_ASSUME: ""

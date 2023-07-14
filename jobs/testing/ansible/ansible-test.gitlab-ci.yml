@@ -49,14 +49,14 @@ variables:
         NAMESPACE=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["namespace"])')
         NAME=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["name"])')
       fi
-      
+
       mkdir -p $COLLECTION_PATH
 
       if [[ -f "galaxy.yml" ]]
       then
         cp -R . $COLLECTION_PATH
         rm -rf $COLLECTION_PATH/.venv
-        
+
       else
         # tests
         [[ -d "tests" ]] && mkdir -p $COLLECTION_PATH/tests && cp -R tests/* $COLLECTION_PATH/tests/
@@ -72,7 +72,7 @@ variables:
         [[ -d "lookup_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/lookup && cp -R lookup_plugins/* $COLLECTION_PATH/plugins/lookup/
         [[ -d "test_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/test && cp -R test_plugins/* $COLLECTION_PATH/plugins/test/
         [[ -d "vars_plugins" ]] && mkdir -p $COLLECTION_PATH/plugins/vars && cp -R vars_plugins/* $COLLECTION_PATH/plugins/vars/
-        
+
         # role content
         mkdir -p $COLLECTION_PATH/roles/fake
         [[ -d "defaults" ]] && cp -R ./defaults $COLLECTION_PATH/roles/fake/

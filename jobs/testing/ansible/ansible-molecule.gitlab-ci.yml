@@ -1,6 +1,6 @@
 ---
 
-include: 
+include:
   - local: /jobs/utils/gitlab-http-access.gitlab-ci.yml
   - local: /services/docker-dind.gitlab-ci.yml
 

@@ -1,6 +1,6 @@
 ---
 
-include: 
+include:
   - local: /jobs/utils/supported-os-matrix.gitlab-ci.yml
   - local: /jobs/building/containers/kaniko.gitlab-ci.yml
 
@@ -21,7 +21,7 @@ include:
 #    script:
 #      - >
 #        ${KANIKO_COMMAND}
-#        --dockerfile Dockerfile 
+#        --dockerfile Dockerfile
 #        --build-arg EL_VERSION=${EL_VERSION}
 #        --build-arg BASE_OS=${BASE_OS}
 #        --destination $REGISTRY/<namespace>/<container_id>:<tag>

@@ -10,7 +10,7 @@
 include:
   - template: Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/SAST.gitlab-ci.yml
-  #- template: Jobs/Code-Quality.gitlab-ci.yml
+  # - template: Jobs/Code-Quality.gitlab-ci.yml
   - local: /jobs/testing/qa/sonarqube.gitlab-ci.yml
 
 stages:

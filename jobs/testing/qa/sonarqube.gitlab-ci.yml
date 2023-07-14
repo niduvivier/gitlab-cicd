@@ -60,7 +60,7 @@ sonarqube:
     SONAR_PROJECT_NAME: "$CI_PROJECT_PATH"
     SONAR_PROJECT_TAGS: ""
     SONAR_PROJECT_MONOREPO: "false"
-  image: 
+  image:
     name: sonarsource/sonar-scanner-cli:4
     entrypoint: [""]
   allow_failure: false

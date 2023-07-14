@@ -77,7 +77,7 @@ maven-release:
       -DreleaseVersion=${PROJECT_VERSION}
       -DdevelopmentVersion=0.0.0-SNAPSHOT
       -DdryRun=false
-      -DgenerateReleasePoms=false 
+      -DgenerateReleasePoms=false
   before_script:
     - !reference [.gitlab_http_access, before_script]
   script:

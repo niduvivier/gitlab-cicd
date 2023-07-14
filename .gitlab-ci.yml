@@ -1,9 +1,17 @@
 ---
 
-include: 
+include:
   - local: /jobs/releasing/semantic-release.gitlab-ci.yml
 
 stages:
+  - linting
   - release
+
+
+yamllint:
+  stage: linting
+  image: registry.gitlab.com/pipeline-components/yamllint:latest
+  script:
+    - yamllint .
 
 ...
