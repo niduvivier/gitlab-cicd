@@ -15,6 +15,15 @@
 #     default_value: "false"
 #     description: when set to "true" (as string!) it will select our test sonarqube instance
 #                  to do the scanning against.
+#   - name: SONAR_QUALITY_GATE_OVERRIDE
+#     default_value: "false"
+#     description: when set to "true" (as string!) it will select use the property value SONAR_QUALITY_GATE_NAME
+#                  to set the quality gate (by Name) in sonarqube
+#   - name: SONAR_QUALITY_GATE_NAME
+#     default_value: "Sonar%20way"
+#     description: this setting goes together with the property value SONAR_QUALITY_GATE_OVERRIDE (if true)
+#                  must be set in the project pipeline to select the correct quality gate.
+#                  !!! make sure your value is already URL encoded !!!
 #   - name: SONAR_SCANNER_ADDITIONAL_OPTS
 #     default_value: ''
 #     description: Can contain extra -Dsonar.xxx variables to pass to sonar-canner cli.
@@ -58,6 +67,8 @@ sonarqube:
     SONAR_USE_TEST_ENVIRONMENT: "false"
     SONAR_PROJECT_KEY: "project-$CI_PROJECT_ID"
     SONAR_PROJECT_NAME: "$CI_PROJECT_PATH"
+    SONAR_QUALITY_GATE_OVERRIDE: "false"
+    SONAR_QUALITY_GATE_NAME: "Sonar%20way"
     SONAR_PROJECT_TAGS: ""
     SONAR_PROJECT_MONOREPO: "false"
   image:
@@ -74,6 +85,10 @@ sonarqube:
       fi
       SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY/[^a-zA-Z0-9-_\.]/.}
       git fetch --unshallow || git fetch --all
+      if [ "$SONAR_QUALITY_GATE_OVERRIDE" == "true" ]
+      then
+        curl -w '%{http_code}' -o /dev/null -sS -u "${SONAR_TOKEN_PROV}:" -X POST "${SONAR_HOST_URL}api/qualitygates/select?projectKey=${SONAR_PROJECT_KEY}&gateName=${SONAR_QUALITY_GATE_NAME}"
+      fi
     - >
       sonar-scanner
       -Dsonar.projectKey=$SONAR_PROJECT_KEY
