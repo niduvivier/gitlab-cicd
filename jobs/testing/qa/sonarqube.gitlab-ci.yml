@@ -73,7 +73,7 @@ sonarqube:
         SONAR_TOKEN_PROV=${SONARQUBE_TEST_PROVISION_TOKEN}
       fi
       SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY/[^a-zA-Z0-9-_\.]/.}
-      git fetch --unshallow
+      git fetch --unshallow || git fetch --all
     - >
       sonar-scanner
       -Dsonar.projectKey=$SONAR_PROJECT_KEY
