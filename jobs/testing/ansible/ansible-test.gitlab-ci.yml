@@ -125,7 +125,7 @@ ansible-sanity:
     - mkdir -p /root/.ansible/test/cache
     - curl -sSL "https://ci-files.testing.ansible.com/ansible-test/get-pip-21.3.1.py" -o /root/.ansible/test/cache/get_pip_21_3_1.py
     - echo -e "[global]\nproxy = ${http_proxy}" > /etc/pip.conf
-    - ansible-galaxy collection install -r tests/requirements.yml -p /opt
+    - ansible-galaxy collection install -r tests/requirements.yml -p /opt || true
     - ansible-test sanity --coverage --local
 
 ansible-units:
