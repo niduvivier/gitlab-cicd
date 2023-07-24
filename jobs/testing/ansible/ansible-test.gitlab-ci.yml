@@ -110,7 +110,7 @@ variables:
         fi
         if [[ -f "${CI_PROJECT_DIR}/tests/output/junit/python3.9-units.xml" ]]
         then
-          sed -i "s#file=\".*?${COLLECTION_PATH}/#file=\"#g" ${CI_PROJECT_DIR}/tests/output/junit/python3.9-units.xml
+          sed -ri "s#file=\".*?${COLLECTION_PATH}/([^\"]+)\"#file=\"\1\"#g" ${CI_PROJECT_DIR}/tests/output/junit/python3.9-units.xml
         fi
       fi
   artifacts:
