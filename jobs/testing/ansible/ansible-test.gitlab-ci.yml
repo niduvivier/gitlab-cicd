@@ -16,10 +16,18 @@ variables:
 .ansible-test-env:
   before_script:
     - |-
-      NAMESPACE=local
-      NAME=fake
+      #!/bin/bash
+      set -xv
+
+      NS_N=local/fake
       PREFIX=/opt/ansible_collections
-      COLLECTION_PATH=$PREFIX/$NAMESPACE/$NAME
+
+      if [[ -f "galaxy.yml" ]]
+      then
+        NS_N=$(yq -r '"\(.namespace)/\(.name)"' galaxy.yml)
+      fi
+
+      COLLECTION_PATH=$PREFIX/$NS_N
       eval export COLLECTION_PATH=$COLLECTION_PATH
 
 .ansible-test-prereq:
@@ -43,12 +51,6 @@ variables:
     - |-
       #!/bin/bash
       set -xv
-
-      if [[ -f "galaxy.yml" ]]
-      then
-        NAMESPACE=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["namespace"])')
-        NAME=$(python -e 'import yaml; fh = open("galaxy.yaml"); obj = yaml.safe_load(fh); print(obj["name"])')
-      fi
 
       mkdir -p $COLLECTION_PATH
 
@@ -92,9 +94,24 @@ variables:
   after_script:
     - !reference [.ansible-test-env, before_script]
     - |-
+      #!/bin/bash
+      set -xv
       if [[ -d "${COLLECTION_PATH}/tests/output" ]];
       then
         cp -R "${COLLECTION_PATH}/tests/output" "${CI_PROJECT_DIR}/tests/"
+
+        if [[ -f "${CI_PROJECT_DIR}/tests/output/reports/coverage.xml" ]]
+        then
+          sed -i "s#<source>${COLLECTION_PATH}</source>#<source>.</source>#g" ${CI_PROJECT_DIR}/tests/output/reports/coverage.xml
+          if [[ ! -e "galaxy.yml" ]]
+          then
+            sed -i 's#filename="plugins/modules#filename="library#g' ${CI_PROJECT_DIR}/tests/output/reports/coverage.xml
+          fi
+        fi
+        if [[ -f "${CI_PROJECT_DIR}/tests/output/junit/python3.9-units.xml" ]]
+        then
+          sed -i "s#file=\".*?${COLLECTION_PATH}/#file=\"#g" ${CI_PROJECT_DIR}/tests/output/junit/python3.9-units.xml
+        fi
       fi
   artifacts:
     paths:
@@ -107,7 +124,8 @@ ansible-sanity:
   script:
     - mkdir -p /root/.ansible/test/cache
     - curl -sSL "https://ci-files.testing.ansible.com/ansible-test/get-pip-21.3.1.py" -o /root/.ansible/test/cache/get_pip_21_3_1.py
-    - pip config set global.proxy "${http_proxy}"
+    - echo -e "[global]\nproxy = ${http_proxy}" > /etc/pip.conf
+    - ansible-galaxy collection install -r tests/requirements.yml -p /opt
     - ansible-test sanity --coverage --local
 
 ansible-units:
