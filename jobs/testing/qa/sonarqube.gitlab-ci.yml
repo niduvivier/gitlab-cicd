@@ -72,7 +72,7 @@ sonarqube:
     SONAR_PROJECT_TAGS: ""
     SONAR_PROJECT_MONOREPO: "false"
   image:
-    name: sonarsource/sonar-scanner-cli:4
+    name: sonarsource/sonar-scanner-cli:5
     entrypoint: [""]
   allow_failure: false
   script:
