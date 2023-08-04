@@ -45,6 +45,8 @@ semantic-release:
   rules:
     # Run on default branch
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # Run on maintenanceBranches (only support for "stable-" branch pattern)
+    - if: $CI_COMMIT_BRANCH =~ /^stable-/
     # Do not run otherwise
     - when: never
 
