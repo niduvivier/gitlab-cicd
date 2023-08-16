@@ -1,0 +1,37 @@
+---
+
+# This job requires the user to include this job template, and extend in a job
+# providing the required variables:
+# - ANSIBLE_INVENTORY_FILE: relative file paht towards the inventory file to test
+# - ANSIBLE_INVENTORY_CHECK_FOR_GROUP: string sith the name of a (top-level) group name always to
+#                                      be expected to be present when parsing succeeds.
+
+# This job is meant to be used against ansible inventory file, so you can validate the parsing
+# eg. no group of groups includes non-existing groups would be the most common error
+
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: ansible-inventory.gitlab-ci.yml
+# stages:
+#   - test
+# test-ansible-inventory:
+#   extends:
+#     - .ansible-inventory
+#   variables:
+#     ANSIBLE_INVENTORY_FILE: hosts-prd
+#     ANSIBLE_INVENTORY_CHECK_FOR_GROUP: prd
+
+
+.ansible-inventory:
+  image: $REGISTRY/automation/containers/ansible-molecule:production
+  variables:
+    ANSIBLE_INVENTORY_FILE: "null"
+    ANSIBLE_INVENTORY_CHECK_FOR_GROUP: "null"
+  script:
+    - ANSIBLE_INVENTORY_OUTPUT=$(ansible-inventory -i ${ANSIBLE_INVENTORY_FILE} --list | jq ".${ANSIBLE_INVENTORY_CHECK_FOR_GROUP}")
+    - echo "${ANSIBLE_INVENTORY_OUTPUT}"
+    - if [[ "ANSIBLE_INVENTORY_OUTPUT" == "null" ]]; then false; else true; fi
+
+...
