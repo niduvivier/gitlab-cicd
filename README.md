@@ -16,8 +16,6 @@ Find a list of all available content beneath. Specific documenation and usage of
   Job Template: Build Dockerfile projects and push to ECR registry
 - [building/containers/kaniko-matrix](./building/containers/kaniko-matrix.gitlab-ci.yml)
   Job Template: Build Dockerfile projects parallel over a currated set of supported OSes
-- [releasing/maven-release](./jobs/releasing/maven-release.gitlab-ci.yml)
-  Job: run maven release structurally
 - [releasing/semantic-release](./jobs/releasing/semantic-release.gitlab-ci.yml)
   Job: Create a semantic versioned gitlab release + git tag based on conventional commits
 - [testing/ansible/ansible-inventory](./testing/ansible/ansible-inventory.gitlab-ci.yml)
