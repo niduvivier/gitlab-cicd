@@ -34,7 +34,7 @@
     ARS_AWS_PROFILE: ""
     ARS_AWS_ROLE_TO_ASSUME: ""
     AWS_REGION: "eu-central-1"
-    ARS_PAYLOAD: "{\"role-to-assume\":\"${ARS_AWS_ROLE_TO_ASSUME}\",\"ci-job-token\":\"${CI_JOB_TOKEN}\",\"aws-profile\":\"${ARS_AWS_PROFILE}\", \"AWS_REGION\": \"${AWS_REGION}\"}"
+    ARS_PAYLOAD: "{\"role-to-assume\":\"${ARS_AWS_ROLE_TO_ASSUME}\",\"ci-job-token\":\"${CI_JOB_TOKEN}\",\"aws-profile\":\"${ARS_AWS_PROFILE}\", \"aws-region\": \"${AWS_REGION}\"}"
     ARS_ENDPOINT: 'http://nomad.dev.yelo.inet.telenet.be/ars/ecrlogin'
   before_script:
     - curl -XPOST -s "${ARS_ENDPOINT}" -H 'Content-Type:application/json' -d "${ARS_PAYLOAD}" -o .env
