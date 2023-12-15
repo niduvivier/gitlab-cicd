@@ -30,6 +30,8 @@
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
+  variables:
+    KANIKO_CONTEXT: "${CI_PROJECT_DIR}"
   before_script:
     - |-
        mkdir -p /kaniko/.docker
@@ -41,6 +43,6 @@
        fi
        KANIKOCFG="${KANIKOCFG} }"
        echo "${KANIKOCFG}" > /kaniko/.docker/config.json
-       KANIKO_COMMAND="/kaniko/executor --reproducible --insecure --insecure-pull --registry-mirror ${REGISTRY_GROUP} --context ${CI_PROJECT_DIR} ${KANIKOPROXYBUILDARGS} --cache=true"
+       KANIKO_COMMAND="/kaniko/executor --reproducible --insecure --insecure-pull --registry-mirror ${REGISTRY_GROUP} --context ${KANIKO_CONTEXT} ${KANIKOPROXYBUILDARGS} --cache=true"
 
 ...
