@@ -37,7 +37,7 @@ include:
     - .aws_ecr_login
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:debug
+    name: $REGISTRY/automation/containers/kaniko-curl
     entrypoint: [""]
   before_script:
     - !reference [.aws_ecr_login, before_script]
