@@ -1,0 +1,37 @@
+---
+
+# Use this job template deploy to a package a helm chart
+#
+# required input:
+# - HELM_DIR: directory where the helm charts are deployed. e.g. 'charts' or 'helm/streaming-api'
+# env
+# This job requires the user to include this job template
+# This job requires the user to define the build stage in his pipeline
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: jobs/deploying/helm-package.yml
+# stages:
+#   - build
+
+
+helm-package-job:
+  image: hypnoglow/helm-s3:master-helm3.13
+  stage: build
+  variables:
+    HELM_CHART_DIR: $HELM_DIR
+  script:
+    - |
+      helm lint $HELM_CHART_DIR
+      helm package $HELM_CHART_DIR --destination build/helm
+      HELM_REVISION=$(helm show chart $HELM_CHART_DIR | awk '/^version/ {print $2}')
+      echo HELM_REVISION=$HELM_REVISION >> helm.env  
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - build/helm
+    reports:
+      dotenv: helm.env
+
+...
