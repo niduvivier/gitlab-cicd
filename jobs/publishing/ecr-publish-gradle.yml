@@ -1,0 +1,29 @@
+---
+
+include:
+  - local: /jobs/utils/aws/aws-assume-role.gitlab-ci.yml
+  - local: /jobs/utils/gradle-env.yml
+
+ecr-publish-image:
+  image: registry.dev.yelo.inet.telenet.be/enttribe/ansible-aws-cli:1.4.0-ansible9.6.0
+  stage: publish
+  extends:
+    - .gradle_env
+    - .aws_assume_role
+  image: registry.dev.yelo.inet.telenet.be/vqd/gradle-ecr-helper:7.4.2-jdk17
+  before_script:
+    - !reference [.gradle_env, before_script]
+    - !reference [.aws_assume_role, before_script]
+  variables:
+    ARS_AWS_PROFILE: "$AWS_SHARED_ACCOUNT_NAME"
+    ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam::$AWS_SHARED_ACCOUNT:role/$AWS_ASSUME_ROLE_FOR_ECR_DEPLOY"
+    http_proxy: "http://proxy.inet.telenet.be:8080"
+    https_proxy: "http://proxy.inet.telenet.be:8080"
+    no_proxy: "*.yelo.inet.telenet.be"
+  script:
+    - cat ./gradle.properties
+    - ./gradlew -x test jib
+  only:
+    variables:
+      - $INT_TEST == "T" && $GITLAB_USER_LOGIN != $RENOVATE_USER
+

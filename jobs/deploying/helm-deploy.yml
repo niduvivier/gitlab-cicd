@@ -1,0 +1,41 @@
+---
+
+include:
+  - local: /jobs/utils/aws/aws-assume-role.gitlab-ci.yml
+
+# Use this job template deploy to a helm chart to an AWS S3 Bucket
+#
+# required input:
+# - AWS_SHARED_ACCOUNT_NAME: the name of the shared account
+# - AWS_SHARED_ACCOUNT: shared account ID
+# - AWS_ASSUME_ROLE_FOR_HELM_DEPLOY: the role to assume for deploying the helm chart
+# - HELM_REPO_URL: the URL of the helm repository (s3 bucket URL)
+# env
+# This job requires the user to include this job template
+# This job requires the user to define the deploy stage in his pipeline
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: jobs/deploying/helm-deploy.yml
+# stages:
+#   - deploy
+
+
+
+helm-deploy-job:
+  image: hypnoglow/helm-s3:master-helm3.13
+  stage: deploy
+  extends:
+    - .aws_assume_role
+  variables:
+    ARS_AWS_PROFILE: "$AWS_SHARED_ACCOUNT_NAME"
+    ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam::$AWS_SHARED_ACCOUNT:role/$AWS_ASSUME_ROLE_FOR_HELM_DEPLOY"
+  script:
+    - helm s3 init $HELM_REPO_URL --ignore-if-exists
+    - helm repo add charts $HELM_REPO_URL
+    - helm s3 push build/helm/*.tgz charts --force
+  needs:
+    - job: helm-package-job
+      artifacts: true
+
