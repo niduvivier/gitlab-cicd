@@ -14,7 +14,7 @@
 #    - project: automation/cicd/templates
 #     ref: ${latest project version}
 #      ref: ${project latest version}
-#      file: utils/gradle-env.gitlab-ci.yml
+#      file: jobs/utils/gradle-env.gitlab-ci.yml
 #  job1:
 #    extends: .gradle-env
 #    script:

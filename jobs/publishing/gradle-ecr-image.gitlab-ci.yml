@@ -12,7 +12,7 @@ publish-gradle-ecr-image:
     - .aws_assume_role
   image: registry.dev.yelo.inet.telenet.be/vqd/gradle-ecr-helper:7.4.2-jdk17
   before_script:
-    - !reference [.gradle_env, before_script]
+    - !reference [.gradle-env, before_script]
     - !reference [.aws_assume_role, before_script]
   variables:
     ARS_AWS_PROFILE: "$AWS_SHARED_ACCOUNT_NAME"
