@@ -34,6 +34,6 @@ deploy-helm:
     - helm repo add charts $HELM_REPO_URL
     - helm s3 push build/helm/*.tgz charts --force
   needs:
-    - job: helm-package-job
+    - job: build-helm-package
       artifacts: true
 
