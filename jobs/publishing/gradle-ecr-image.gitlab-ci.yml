@@ -8,7 +8,7 @@ publish-gradle-ecr-image:
   image: registry.dev.yelo.inet.telenet.be/enttribe/ansible-aws-cli:1.4.0-ansible9.6.0
   stage: publish
   extends:
-    - .gradle_env
+    - .gradle-env
     - .aws_assume_role
   image: registry.dev.yelo.inet.telenet.be/vqd/gradle-ecr-helper:7.4.2-jdk17
   before_script:
