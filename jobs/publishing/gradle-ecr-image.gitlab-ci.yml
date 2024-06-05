@@ -2,9 +2,9 @@
 
 include:
   - local: /jobs/utils/aws/aws-assume-role.gitlab-ci.yml
-  - local: /jobs/utils/gradle-env.yml
+  - local: /jobs/utils/gradle-env.gitlab-ci.yml
 
-ecr-publish-image:
+publish-gradle-ecr-image:
   image: registry.dev.yelo.inet.telenet.be/enttribe/ansible-aws-cli:1.4.0-ansible9.6.0
   stage: publish
   extends:

@@ -14,13 +14,13 @@
 #    - project: automation/cicd/templates
 #     ref: ${latest project version}
 #      ref: ${project latest version}
-#      file: utils/gradle-env.yml
+#      file: utils/gradle-env.gitlab-ci.yml
 #  job1:
-#    extends: .gradle_env
+#    extends: .gradle-env
 #    script:
 #      - /bin/true
 
-.gradle_env:
+.gradle-env:
   before_script:
     - |
       cat > ./gradle.properties <<- EOF

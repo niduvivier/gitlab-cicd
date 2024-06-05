@@ -11,12 +11,11 @@
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
-#     file: jobs/deploying/helm-package.yml
+#     file: jobs/deploying/build-helm-package.yml
 # stages:
 #   - build
 
-
-helm-package-job:
+build-helm-package:
   image: hypnoglow/helm-s3:master-helm3.13
   stage: build
   variables:

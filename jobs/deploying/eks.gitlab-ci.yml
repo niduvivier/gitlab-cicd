@@ -12,12 +12,11 @@ include:
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
-#     file: jobs/deploying/eks-deploy.yml
+#     file: jobs/deploying/deploy-eks.gitlab-ci.yml
 # stages:
 #   - deploy
 
-
-.deploy-to-eks:
+.deploy-eks:
   image: registry.dev.yelo.inet.telenet.be/enttribe/ansible-aws-cli:1.4.0-ansible9.6.0
   stage: deploy
   extends:

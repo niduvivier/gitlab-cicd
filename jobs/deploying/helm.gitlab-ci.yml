@@ -17,13 +17,11 @@ include:
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
-#     file: jobs/deploying/helm-deploy.yml
+#     file: jobs/deploying/deploy-helm.gitlab-ci.yml
 # stages:
 #   - deploy
 
-
-
-helm-deploy-job:
+deploy-helm:
   image: hypnoglow/helm-s3:master-helm3.13
   stage: deploy
   extends:
