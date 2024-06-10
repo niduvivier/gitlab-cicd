@@ -23,7 +23,4 @@ publish-gradle-ecr-image:
   script:
     - cat ./gradle.properties
     - ./gradlew -x test jib
-  only:
-    variables:
-      - $INT_TEST == "T" && $GITLAB_USER_LOGIN != $RENOVATE_USER
 
