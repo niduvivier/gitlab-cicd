@@ -1,0 +1,12 @@
+---
+
+.after-test-execute:
+  after_script:
+    - export NO_PROXY="docker,$NO_PROXY"
+    - export no_proxy=$NO_PROXY
+    - if [ "$SHOW_QA_DOCKER_LOGS" == "True" ] || [ "$CI_JOB_STATUS" != "success" ]; then
+    -   docker-compose logs -t
+    - fi
+    - docker-compose down
+
+...

@@ -1,0 +1,27 @@
+---
+
+## Use this script template to extract stage from branch name.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/extract-stage-from-branch.gitlab-ci.yml
+#   
+#  before_script:
+#    - !reference [.extract-stage-from-branch]
+
+.extract-stage-from-branch:
+  - if [ -n "${CUSTOMIZE_PREFIX_FOR_BRANCHES}" ] && [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+  -    export BRANCH_ID="MR${CI_MERGE_REQUEST_ID}"
+  -    export STAGE="${BRANCH_ID}"
+  -    export GENERATE_API_GATEWAY_KEY="true"
+  - else
+  -   export STAGE="${DEPLOY_STAGE}"
+  - fi
+  - echo $STAGE
+
+...

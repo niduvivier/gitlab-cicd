@@ -1,0 +1,33 @@
+---
+include:
+  - local: jobs/releasing/maven.gitlab-ci.yml
+
+release-maven-jgitver:
+  extends: .release-maven
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $RENOVATE_BOT_AUTO_RELEASE == 'True' && $GITLAB_USER_LOGIN == $RENOVATE_AUTORELEASE_USER
+      exists:
+        - "**/.mvn/jgitver.config.xml"
+      when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      exists:
+        - "**/.mvn/jgitver.config.xml"
+      when: manual
+      allow_failure: true
+    - when: never
+  script:
+    - (! grep SNAPSHOT $PROJECT_ROOT/pom.xml)
+    - echo "SHORT_VERSION:" ${SHORT_VERSION}
+    - git fetch --all
+    - git checkout $CI_DEFAULT_BRANCH
+    - git checkout master
+    - git merge -m "[RELEASE] merging '${CI_DEFAULT_BRANCH}' into 'master'" $CI_DEFAULT_BRANCH
+    - git tag -a ${SHORT_VERSION} -m "Release ${SHORT_VERSION}"
+    - git checkout $CI_DEFAULT_BRANCH
+    - git merge -m "[RELEASE] merging '${SHORT_VERSION}' into '${CI_DEFAULT_BRANCH}'" ${SHORT_VERSION}
+    # Remove all lightweight version tags on the current git commit-sha locallay and remote
+    # || [[ $? == 1 ]] makes sure that grep will not return an exit code in case no lightweight version tag is available on the current git commit-sha
+    - git for-each-ref refs/tags | (grep -E "$(git rev-parse --verify HEAD) commit\s+refs/tags/v{0,1}[1-9.]+" || [[ $? == 1 ]]) | cut -d'/' -f3 | while read -r version; do git tag -d $version && git push --delete origin $version; done
+    - git push origin --all
+    - git push origin --tags
+...

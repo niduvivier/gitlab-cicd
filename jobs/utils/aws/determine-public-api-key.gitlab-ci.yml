@@ -1,0 +1,25 @@
+---
+
+## Use this script template to determine the public api key for the public API gateway.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/aws/determine-public-api-key.gitlab-ci.yml
+#   
+#  script:
+#    - !reference [..determine-public-api-key]
+
+.determine-public-api-key:
+  - export API_PUBLIC_KEY_NAME="${CUSTOM_PREFIX}${STAGE}${TENANT}PublicApiKey${AWS_SPOKE_VERSION}"
+  # Get all apikeys and filter on name
+  - export AWS_PUBLIC_API_KEY_ID=$(aws apigateway get-api-keys | jq --arg api_key_name $API_PUBLIC_KEY_NAME -r '.items[] | select(.name==$api_key_name) | .id')
+  # retrieve api_key value for the specific API_key    
+  - export API_PUBLIC_KEY=$(aws apigateway get-api-key --api-key "${AWS_PUBLIC_API_KEY_ID}" --include-value | jq -r '.value')
+  - echo $API_PUBLIC_KEY | sed -e 's/^\(.\{5\}\).*/\1*****/'
+
+...

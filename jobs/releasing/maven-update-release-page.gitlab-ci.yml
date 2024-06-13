@@ -1,0 +1,31 @@
+---
+
+maven-update-release-page:
+  stage: release
+  variables:
+    CONFLUENCE_TOKEN: $GITLAB_RUNNER_CONF_TKN
+    JIRA_TOKEN: $GITLAB_RUNNER_JIRA_TKN
+    COMPONENT_NAME: $CI_PROJECT_TITLE
+    COMPONENT_VERSION: $VERSION
+    JIRA_PROJECT: "ISSTM"
+    SQUAD_ABBREVIATION: "ISS"
+  image: "${REGISTRY}/enttribe/iss/release-automation:latest"
+  rules:
+    - if: $INCLUDE_IN_RELEASE_PAGE == "YES" && $CI_COMMIT_TAG != null
+    - when: never
+  needs:
+    - job: maven-build
+      artifacts: true
+    - job: publish-maven
+      artifacts: false
+  script:
+    - POM_GROUP_ID=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='groupId']/text()" "${PROJECT_ROOT}/target/effective-pom.xml")
+    - POM_REPOSITORY_URL=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='distributionManagement']/*[local-name()='repository']/*[local-name()='url']/text()" "${PROJECT_ROOT}/target/effective-pom.xml")
+    - REPOSITORY_DISTRIBUTION=$(echo $POM_REPOSITORY_URL | sed 's/\/$//' | awk -F "/" '{ print $NF }')
+    - echo $POM_GROUP_ID
+    - echo $REPOSITORY_DISTRIBUTION
+    - export NEXUS_LINK="${NEXUS_URL}/service/rest/repository/browse/${REPOSITORY_DISTRIBUTION}/${POM_GROUP_ID//.//}/${POM_ARTIFACT_ID}/${VERSION}"
+    - echo $NEXUS_LINK
+    - python /script/release-automation.py
+
+...

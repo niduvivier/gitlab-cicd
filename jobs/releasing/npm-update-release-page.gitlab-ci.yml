@@ -1,0 +1,39 @@
+---
+
+include:
+  - local: jobs/utils/npm-determine-nexus-link.gitlab-ci.yml
+
+## Use this job template to provide release page updates. 
+#
+# Use this job template by including this file from the project
+# and defining the update-release-notes stage
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/releasing/npm-update-release-page.gitlab-ci.yml
+# stages:
+#   - update-release-notes
+
+npm-update-release-page:
+  stage: update-release-notes
+  variables:
+    CONFLUENCE_TOKEN: $GITLAB_RUNNER_CONF_TKN
+    JIRA_TOKEN: $GITLAB_RUNNER_JIRA_TKN
+    COMPONENT_NAME: $CI_PROJECT_TITLE
+    COMPONENT_VERSION: $VERSION
+    JIRA_PROJECT: "ISSTM"
+    SQUAD_ABBREVIATION: "ISS"
+  image: 
+    name: registry.dev.yelo.inet.telenet.be/enttribe/iss/release-automation:latest
+    pull_policy: always
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  before_script:
+    - !reference [.npm-determine-nexus-link]
+  script:
+    - export NEXUS_LINK=$ARTIFACT_LINK_TO_DEPLOY
+    - python /script/release-automation.py
+
+...

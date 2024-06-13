@@ -1,0 +1,48 @@
+---
+
+include:
+  - local: services/docker-dind.gitlab-ci.yml
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+  - local: jobs/utils/testing/before-test-execute.gitlab-ci.yml
+  - local: jobs/utils/testing/after-test-execute.gitlab-ci.yml
+
+qa-test-execute:
+  stage: qa-test
+  image:
+    name: docker/compose:1.29.2
+    entrypoint: [ "" ]
+  services:
+    - !reference [.docker-dind, services]
+  needs:
+    - job: maven-build
+      artifacts: true
+    - job: maven-create-jar
+      artifacts: true
+  before_script:
+    - !reference [.maven-env, before_script]
+    - !reference [.test-execute, before_script]
+  script:
+    - docker-compose up --exit-code-from $DOCKER_COMPOSE_QA_SERVICE $DOCKER_COMPOSE_QA_SERVICE
+  after_script:
+    - !reference [.after-test-execute, after_script]
+    - if [ "$CI_COMMIT_BRANCH" != null ] && [ "$CI_COMMIT_BRANCH" != "" ]; then
+    # Download previously published results and store them in the history folder
+    -   mkdir -p ./$PROJECT_ROOT_QA/target/backup && cd ./$PROJECT_ROOT_QA/target/backup || true
+    -   echo ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/artifacts/${CI_COMMIT_BRANCH}/download?job=pages
+    -   'wget -O report.zip --header "PRIVATE-TOKEN: $DEPLOY_TOKEN" ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/artifacts/${CI_COMMIT_BRANCH}/download?job=pages || true'
+    -   (unzip report.zip) || true
+    -   cd ..
+    -   (cp -r backup/public/history allure-results) || true
+    - fi
+  artifacts:
+    expire_in: 1 days
+    when: always
+    paths:
+      - ./$PROJECT_ROOT_QA/target/allure-results/
+      - ./$PROJECT_ROOT_QA/target/site/allure-maven-plugin
+    reports:
+      junit:
+        - ./$PROJECT_ROOT_QA/target/surefire-reports/TEST*.xml
+      dotenv: ./$PROJECT_ROOT_QA/docker.env
+
+...

@@ -1,0 +1,23 @@
+---
+
+## Use this script template to create kafka config for stage.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/create-kafka-config.gitlab-ci.yml
+#   
+#  script:
+#    - !reference [.create-kafka-config]
+
+.create-kafka-config:
+  - if [ -n "${CUSTOMIZE_PREFIX_FOR_BRANCHES}" ] && [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+  -   export KAFKA_CONSUMER_GROUP_ID_PREFIX="AWS-${CI_PROJECT_NAME//-/}-${STAGE}-"
+  -   export KAFKA_CONSUMER_GROUP_ID_PREFIX_HISTORICAL="AWS-${CI_PROJECT_NAME//-/}-historical-${STAGE}-"
+  - fi
+  
+...

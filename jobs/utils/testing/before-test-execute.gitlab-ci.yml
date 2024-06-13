@@ -1,0 +1,11 @@
+---
+
+.test-execute:
+  before_script:
+    - export M2_SETTINGS_PATH=".m2/settings.xml"
+    - export CACHE_FOLDER="/cache"
+    - export NO_PROXY="docker,$NO_PROXY"
+    - export no_proxy=$NO_PROXY
+    - docker info
+
+...

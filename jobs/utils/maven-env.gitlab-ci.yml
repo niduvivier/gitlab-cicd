@@ -1,0 +1,32 @@
+---
+
+## Use this script template to prepare M2 settings XML.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: core-backend-platforms/sq_core_backend_templates
+#     ref: ${latest project release version}
+#     file: utils/maven-env.gitlab-ci.yml
+#   
+#  script:
+#    - !reference [.maven-env]
+
+variables:
+  # Default Maven options
+  MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT -Dhttps.proxyHost=$PROXY_HOST -Dhttps.proxyPort=$PROXY_PORT -Dhttp.nonProxyHosts=$NON_PROXY_HOSTS -Dhttps.nonProxyHosts=$NON_PROXY_HOSTS"
+  MAVEN_CLI_OPTS: "-s $CI_PROJECT_DIR/.m2/settings.xml -B -U"
+  JGITVER_BRANCH: $CI_COMMIT_BRANCH
+
+.maven-env:
+  before_script:
+    - mkdir -p .git/info
+    - echo ".m2" >> .git/info/exclude
+    - mkdir -p .m2 || true
+    - cp $MAVEN_SETTINGS_XML .m2/settings.xml
+    - NEXUS_URL="${AWS_NEXUS_URL:-$NEXUS_URL}"
+    - sed -i "s|http://nexus.dev.yelo.inet.telenet.be|$NEXUS_URL|g" .m2/settings.xml
+
+...

@@ -1,0 +1,36 @@
+---
+
+include:
+  - local: services/docker-dind.gitlab-ci.yml
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+  - local: jobs/utils/testing/before-test-execute.gitlab-ci.yml
+  - local: jobs/utils/testing/after-test-execute.gitlab-ci.yml
+
+k6-test-execute:
+  stage: qa-test
+  image:
+    name: docker/compose:1.29.2
+    entrypoint: [ "" ]
+  services:
+    - !reference [.docker-dind, services]
+  needs:
+    - job: maven-build
+      artifacts: true
+    - job: maven-create-jar
+      artifacts: true
+  before_script:
+     - !reference [.test-execute, before_script]
+  script:
+    - docker-compose up --exit-code-from $DOCKER_COMPOSE_K6_SERVICE $DOCKER_COMPOSE_K6_SERVICE
+  after_script:
+     - !reference [.after-test-execute, after_script]
+  artifacts:
+    expire_in: 1 days
+    when: always
+    paths:
+      - ./$PROJECT_ROOT_QA/k6/results/
+  except:
+    variables:
+      - $K6 != "True"
+
+...

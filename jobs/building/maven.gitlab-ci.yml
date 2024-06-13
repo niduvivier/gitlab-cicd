@@ -1,0 +1,52 @@
+---
+
+# Use this job template to build a maven project
+#
+# optional input:
+# - MAVEN_COMPILE_PHASE: possible to override the default compile phase. Default is 'test-compile'
+#
+# This job requires the user to include this job template
+# This job requires the user to define the build stage in his pipeline
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: jobs/building/maven.gitlab-ci.yml
+# stages:
+#   - build
+
+include:
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+
+maven-build:
+  variables:
+    MAVEN_COMPILE_PHASE: "test-compile"
+  stage: build
+  before_script:
+    - !reference [.maven-env, before_script]
+  script:
+    - cd $PROJECT_ROOT
+    - echo "$MAVEN_CLI_OPTS $MAVEN_COMPILE_PHASE -DskipTests $MAVEN_OPTS" 
+    - mvn $MAVEN_CLI_OPTS $MAVEN_COMPILE_PHASE -DskipTests $MAVEN_OPTS
+    - if [ -z "$VERSION" ]; then
+    -   VERSION=$(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_OPTS)
+    - fi
+    - POM_ARTIFACT_ID=$(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.artifactId -q -DforceStdout $MAVEN_OPTS)
+    - mkdir target || true
+    - echo $(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project -q -DforceStdout $MAVEN_OPTS) > "target/effective-pom.xml"
+    - SHORT_VERSION=$(echo $VERSION | sed 's/[^0-9.]*//g')    
+    - echo "VERSION=$VERSION" >> maven.env
+    - echo "SHORT_VERSION=$SHORT_VERSION" >> maven.env
+    - echo "POM_ARTIFACT_ID=$POM_ARTIFACT_ID" >> maven.env
+  after_script:
+    - cat $PROJECT_ROOT/maven.env
+  artifacts:
+    name: $CI_COMMIT_REF_SLUG
+    expire_in: 2 weeks
+    paths:
+      - $PROJECT_ROOT/target/*
+      - .m2/settings.xml
+      - .git/info/exclude
+    reports:
+      dotenv: $PROJECT_ROOT/maven.env
+...

@@ -1,0 +1,25 @@
+---
+include:
+  - local: jobs/releasing/maven.gitlab-ci.yml
+
+release-maven-jgitflow:
+  extends: .release-maven
+  rules:
+    - exists:
+        - "**/.mvn/jgitver.config.xml"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE != "Updating develop poms back to pre merge state" # Prevent jgitflow from triggering a deploy
+      when: manual
+      allow_failure: true
+    - when: never
+  script:
+    - echo "SHORT_VERSION:" ${SHORT_VERSION}
+    - export NEW_DEVELOP_VERSION=($(echo ${SHORT_VERSION} | awk -F. -v OFS=. '{$2++ ; $3=0 ; print}'))
+    - git fetch --all
+    - git checkout master
+    - git checkout $CI_DEFAULT_BRANCH
+    - git status
+    - (cd ${PROJECT_ROOT} && mvn clean jgitflow:release-start jgitflow:release-finish $MAVEN_CLI_OPTS -DnoReleaseBuild=true -DnoDeploy=true -DpushReleases=false -DlocalOnly=true -DreleaseVersion="${SHORT_VERSION}" -DdevelopmentVersion="${NEW_DEVELOP_VERSION}-SNAPSHOT")
+    - git push origin --all
+    - git push origin --tags
+...

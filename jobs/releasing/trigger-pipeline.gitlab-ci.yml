@@ -1,0 +1,29 @@
+---
+include:
+  - local: jobs/utils/set-git-credentials.gitlab-ci.yml
+
+trigger-pipeline:
+  stage: release
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^hotfix\/.*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: never
+  needs:
+    - job: maven-build
+      artifacts: true
+    - job: release-maven-hotfix-jgitver
+      optional: true
+      artifacts: false
+    - job: release-maven-jgitver
+      optional: true
+      artifacts: false
+    - job: release-maven-jgitflow
+      optional: true
+      artifacts: false
+  before_script:
+    - !reference [.set-git-credentials, before_script]
+    - export CI_API_V4_URL=${AWS_CI_API_V4_URL:-$CI_API_V4_URL}
+  script:
+    - echo --form ref=${SHORT_VERSION} ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/trigger/pipeline
+    - curl -v --fail --request POST --form token=$CI_JOB_TOKEN --form ref=${SHORT_VERSION} ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/trigger/pipeline
+...

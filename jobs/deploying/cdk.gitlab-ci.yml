@@ -1,0 +1,28 @@
+---
+
+include:
+  - local: jobs/utils/aws/aws-assume-role.gitlab-ci.yml
+  - local: jobs/utils/create-config-for-stage.gitlab-ci.yml
+
+deploy-cdk:
+  extends: .aws_assume_role
+  stage: deploy
+  variables:
+    ARS_AWS_PROFILE: "$AWS_ACCOUNT_NAME"
+    ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam::$AWS_ACCOUNT:role/$AWS_ASSUME_ROLE_FOR_DEPLOY"
+  needs:
+    - job: npm-build
+      artifacts: true
+    - job: npm-test
+      artifacts: false
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CUSTOMIZE_PREFIX_FOR_BRANCHES && $CUSTOMIZE_PREFIX_FOR_BRANCHES == "True"
+  before_script:
+     - !reference [.aws_assume_role, before_script]
+     - !reference [.create-config-for-stage]
+  script:
+    - cdk deploy --all --require-approval never
+  resource_group: deploy
+
+...
