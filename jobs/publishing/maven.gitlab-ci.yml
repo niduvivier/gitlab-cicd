@@ -1,0 +1,21 @@
+---
+include:
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+
+publish-maven:
+  stage: publish
+  needs:
+    - job: maven-build
+      artifacts: true
+    - job: maven-create-jar
+      artifacts: true
+  before_script:
+    - !reference [.maven-env, before_script]
+  script:
+    - cd $PROJECT_ROOT
+    - mvn $MAVEN_CLI_OPTS deploy -DskipTests -Dmaven.install.skip=true $MAVEN_OPTS
+  only:
+    - develop
+    - /^hotfix.*$/
+    - tags
+...

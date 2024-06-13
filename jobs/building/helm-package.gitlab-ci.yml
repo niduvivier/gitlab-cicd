@@ -1,17 +1,17 @@
 ---
 
-# Use this job template deploy to a package a helm chart
+# Use this job template to a package a helm chart
 #
 # required input:
 # - HELM_DIR: directory where the helm charts are deployed. e.g. 'charts' or 'helm/streaming-api'
-# env
+#
 # This job requires the user to include this job template
 # This job requires the user to define the build stage in his pipeline
 # eg:
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
-#     file: jobs/deploying/build-helm-package.yml
+#     file: jobs/building/helm-package.gitlab-ci.yml
 # stages:
 #   - build
 

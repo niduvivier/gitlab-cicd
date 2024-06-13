@@ -1,0 +1,25 @@
+---
+include:
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+
+maven-create-jar:
+  stage: package
+  needs:
+    - job: maven-build
+      artifacts: true
+  before_script:
+    - !reference [.maven-env, before_script]
+  script:
+    - cd $PROJECT_ROOT
+    - mvn $MAVEN_CLI_OPTS package -DskipTests $MAVEN_OPTS
+  artifacts:
+    name: $CI_COMMIT_REF_SLUG
+    expire_in: 1 day
+    paths:
+      - $PROJECT_ROOT/target/*
+  only:
+    - develop
+    - master
+    - /^hotfix.*$/
+    - tags
+...

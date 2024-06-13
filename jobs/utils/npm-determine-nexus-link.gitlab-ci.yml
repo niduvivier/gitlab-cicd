@@ -1,0 +1,22 @@
+---
+
+## Use this script template to determine nexus link for package.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/npm-determine-nexus-link.gitlab-ci.yml
+#   
+#  before_script:
+#    - !reference [.npm-determine-nexus-link]
+
+.npm-determine-nexus-link:
+  - echo $VERSION
+  - ARTIFACT_LINK_TO_DEPLOY="${NEXUS_URL}/repository/npm-internal/${PACKAGE_NAME}/-/${PACKAGE_NAME#*/}-${VERSION}.tgz"
+  - echo $ARTIFACT_LINK_TO_DEPLOY
+
+...

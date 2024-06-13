@@ -1,0 +1,61 @@
+---
+
+# This pipeline template is intended to be referenced as an include in a project
+# which purpose is to build a docker container including semantic release
+# The following variables can be set:
+# - CONTAINER_REGISTRY: (optional) the registry where the container will be pushed. If not set the $REGISTRY will be used.
+# - CONTAINER_REPOSITORY: (mandatory) the repository where the container will be pushed
+# - DOCKERFILE: (optional) the path to the Dockerfile to build. If not set the default is $CI_PROJECT_DIR/Dockerfile
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: pipelines/container.gitlab-ci.yml
+
+include:
+  - local: jobs/building/containers/kaniko.gitlab-ci.yml
+  - local: jobs/releasing/semantic-release.gitlab-ci.yml
+
+variables:
+  CONTAINER_REGISTRY: $REGISTRY
+  CONTAINER_REPOSITORY: ""
+  DOCKERFILE: $CI_PROJECT_DIR/Dockerfile
+
+stages:
+  - build
+  - release
+
+container-build:
+  extends: .kaniko
+  script:
+    - |-
+      if [[ -z $CONTAINER_REPOSITORY ]]
+      then
+        echo "CONTAINER_REPOSITORY is not set, exiting"
+        exit 1
+      fi
+      set -x
+      TAG_DESTINATION="--destination $CONTAINER_REGISTRY/$CONTAINER_REPOSITORY:$CI_COMMIT_SHORT_SHA"
+      if [[ ! -z $CI_COMMIT_TAG ]]
+      then
+        TAG_DESTINATION="$TAG_DESTINATION --destination $CONTAINER_REGISTRY/$CONTAINER_REPOSITORY:$CI_COMMIT_TAG"
+        TAG_DESTINATION="$TAG_DESTINATION --destination $CONTAINER_REGISTRY/$CONTAINER_REPOSITORY:latest"
+      elif [[ ! -z $CI_COMMIT_BRANCH && "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]
+      then
+        TAG_DESTINATION="$TAG_DESTINATION --destination $CONTAINER_REGISTRY/$CONTAINER_REPOSITORY:latest"
+      fi
+    - >
+      ${KANIKO_COMMAND}
+      --dockerfile $DOCKERFILE
+      ${TAG_DESTINATION}
+
+semantic-release:
+  rules:
+    # no run on git commit backs from semantic-release process
+    - if: $GITLAB_USER_LOGIN == 'semantic-release-bot'
+      when: never
+    # only on default repository branch
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # else never
+    - when: never
+

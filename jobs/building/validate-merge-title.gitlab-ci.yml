@@ -1,0 +1,37 @@
+---
+
+## Use this job template to provide merge title validation. The merge title needs to be compliant
+# with semantic release.
+# It will also validate merge title requests created by renovate bot.
+#
+# Use this job template by including this file from the project
+# and defining the build stage
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/validate-merge-title.yml
+# stages:
+#   - build
+
+validate-merge-title:
+  image: bash:5.1
+  stage: build
+  variables:
+    GIT_STRATEGY: none
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - echo $CI_MERGE_REQUEST_TITLE
+    - if [[ "$CI_MERGE_REQUEST_TITLE" =~ ^(draft|fix|fix\(deps\)|feat|chore|chore\(deps\)|docs|refactor|test|ci)!*:.+ ]]; then
+    -   echo "Merge request title is according to Conventional Commit message formatting!"
+    - elif [ "$GITLAB_USER_LOGIN" == "renovatebot" ]; then 
+    -   echo "Merge request title is created by RenovateBot!"
+    - else
+    -   echo "Invalid merge request title for use with Semantic Releasing"
+    -   echo "See https://confluence.rel.apps.telenet.be/display/ENTTribe/Gitlab+-+Semantic-Release for more information."
+    -   exit 1
+    - fi
+
+...

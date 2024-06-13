@@ -1,0 +1,34 @@
+---
+
+include:
+  - local: jobs/utils/aws/aws-assume-role.gitlab-ci.yml
+  - local: jobs/utils/npm-determine-nexus-link.gitlab-ci.yml
+
+## Use this job template to provide deployment from nexus to AWS. 
+#
+# The job template is ment to be included and extended as part of another job.
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/deploy-npm-from-nexus-to-aws.gitlab-ci.yml
+#  job1:
+#    extends:
+#      - .deploy-npm-from-nexus-to-aws
+
+.deploy-npm-from-nexus-to-aws:
+  extends: .aws_assume_role
+  variables:
+    ARS_AWS_PROFILE: "$AWS_ACCOUNT_NAME"
+    ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam::$AWS_ACCOUNT:role/$AWS_ASSUME_ROLE_FOR_DEPLOY"
+  before_script:
+    - !reference [.aws_assume_role, before_script]
+    - !reference [.npm-determine-nexus-link]
+  script:
+    - curl -L --header "PRIVATE-TOKEN:${DEPLOY_TOKEN}" $ARTIFACT_LINK_TO_DEPLOY | tar -xvz --strip-components 1
+    - cp npm-shrinkwrap.json package-lock.json
+    - npm config set registry ${NEXUS_URL}/repository/npm-all
+    - npm ci
+    - cdk deploy --all --require-approval never
+
+...

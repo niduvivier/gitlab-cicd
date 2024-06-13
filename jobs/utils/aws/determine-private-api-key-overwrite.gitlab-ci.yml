@@ -1,0 +1,29 @@
+---
+
+## Use this script template to determine the private api key overwrite for the private API gateway.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/aws/determine-private-api-key-overwrite.gitlab-ci.yml
+#   
+#  script:
+#    - !reference [.determine-private-api-key-overwrite]
+
+.determine-private-api-key-overwrite:
+  - if [ -n "${CUSTOMIZE_PREFIX_FOR_BRANCHES}" ] && [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+  -   export API_PRIVATE_KEY_NAME_OVERWRITE="${CUSTOM_PREFIX}${STAGE}${TENANT}PrivateApiKey${AWS_SPOKE_VERSION}"
+      # Get all apikeys and filter on name
+  -   export AWS_API_PRIVATE_KEY_ID_OVERWRITE=$(aws apigateway get-api-keys | jq --arg api_key_name_overwrite $API_PRIVATE_KEY_NAME_OVERWRITE -r '.items[] | select(.name==$api_key_name_overwrite) | .id')
+      # retrieve api_key value for the specific API_key    
+  -   export API_PRIVATE_KEY_OVERWRITE=$(aws apigateway get-api-key --api-key "${AWS_API_PRIVATE_KEY_ID_OVERWRITE}" --include-value | jq -r '.value')
+  -   echo $API_PRIVATE_KEY_OVERWRITE | sed -e 's/^\(.\{5\}\).*/\1*****/'
+  - else 
+  -   export API_PRIVATE_KEY_OVERWRITE=
+  - fi
+  
+...

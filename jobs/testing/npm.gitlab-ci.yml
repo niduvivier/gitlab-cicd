@@ -1,0 +1,36 @@
+---
+
+include:
+  - local: services/docker-dind.gitlab-ci.yml
+
+## Use this job template to perform unit tests. 
+#
+# Use this job template by including this file from the project
+# and defining the test stage. This job also needs a npm-build.
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/npm.gitlab-ci.yml
+# 
+# stages:
+#   - test
+npm-test:
+  stage: test
+  needs:
+    - job: npm-build
+      artifacts: true
+  services:
+    - !reference [.docker-dind, services]
+  script:
+    - npm test
+  retry: 2
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./coverage
+    reports:
+      junit:
+        - junit.xml
+
+...

@@ -1,0 +1,16 @@
+---
+include:
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+  - local: jobs/utils/set-git-credentials.gitlab-ci.yml
+
+.release-maven:
+  stage: release
+  needs:
+    - job: maven-build
+      artifacts: true
+    - job: publish-maven
+      artifacts: false 
+  before_script:
+    - !reference [.maven-env, before_script] 
+    - !reference [.set-git-credentials, before_script] 
+...

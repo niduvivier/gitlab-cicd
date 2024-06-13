@@ -1,0 +1,46 @@
+---
+
+# Use this job template to build a npm project
+#
+# This job requires the user to include this job template
+# This job requires the user to define the build stage in his pipeline
+# eg:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project version}
+#     file: jobs/building/npm.gitlab-ci.yml
+# stages:
+#   - build
+
+include:
+  - project: automation/awx/sq_cicd_core_backend
+    ref: v1.0.0
+    file: core_backend_deployment_multi_template.yml
+  - project: automation/cicd/templates
+    ref: feature/ISSTM-1230
+    file: jobs/utils/extract-stage-from-branch.gitlab-ci.yml
+  
+npm-build:
+  stage: build
+  before_script:
+    - !reference [.extract-stage-from-branch]
+  script:
+    - npm config set registry ${NEXUS_URL}/repository/npm-all
+    - npm ci --cache .npm --prefer-offline
+    - npm shrinkwrap
+    - echo STAGE=$STAGE > build.env
+    - if [ -n "${CUSTOMIZE_PREFIX_FOR_BRANCHES}" ] && [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+    -   echo GENERATE_API_GATEWAY_KEY=$GENERATE_API_GATEWAY_KEY >> build.env
+    - fi
+    - cat build.env
+  artifacts:
+    untracked: false
+    paths:
+      - "node_modules/"
+      - "npm-shrinkwrap.json"
+    when: on_success
+    expire_in: 2 weeks
+    reports:
+      dotenv: build.env
+
+...

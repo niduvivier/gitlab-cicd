@@ -1,0 +1,33 @@
+---
+
+include:
+  - local: services/docker-dind.gitlab-ci.yml
+  - local: jobs/utils/maven-env.gitlab-ci.yml
+
+maven-test:
+  stage: test
+  variables:
+    _JAVA_OPTIONS: "-Djava.io.tmpdir=/temp"
+  needs:
+    - job: maven-build
+      artifacts: true
+  services:
+    - !reference [.docker-dind, services]
+  before_script:
+    - !reference [.maven-env, before_script]
+  script:
+    - mkdir /temp
+    - cd $PROJECT_ROOT
+    - export TZ="Europe/Brussels"
+    - mvn $MAVEN_CLI_OPTS verify $MAVEN_OPTS
+  artifacts:
+    name: $CI_COMMIT_REF_SLUG
+    expire_in: 1 hour
+    paths:
+      - $PROJECT_ROOT/target
+    reports:
+      junit:
+        - $PROJECT_ROOT/target/surefire-reports/TEST-*.xml
+        - $PROJECT_ROOT/target/failsafe-reports/TEST-*.xml
+
+...

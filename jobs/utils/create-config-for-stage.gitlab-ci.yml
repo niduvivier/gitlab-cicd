@@ -1,0 +1,24 @@
+---
+
+## Use this script template to create config for stage.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/create-config-for-stage.gitlab-ci.yml
+#   
+#  script:
+#    - !reference [.create-config-for-stage]
+
+.create-config-for-stage:
+  - echo $STAGE
+  - export CONFIG_NAME=`echo ".env.${CUSTOM_PREFIX}.${STAGE}" | tr [A-Z] [a-z]`
+  - if [ ! -f "./config/${CONFIG_NAME}" ]; then
+  -   cp ./config/.env.${CUSTOM_PREFIX,,}.local ./config/${CONFIG_NAME}
+  - fi
+
+...

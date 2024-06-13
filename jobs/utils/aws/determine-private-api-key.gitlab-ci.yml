@@ -1,0 +1,25 @@
+---
+
+## Use this script template to determine the private api key for the private API gateway.
+#
+# Use this script template by including this file from the project
+# and referencing the script.
+#
+# eg.:
+# include:
+#   - project: automation/cicd/templates
+#     ref: ${latest project release version}
+#     file: jobs/utils/aws/determine-private-api-key.gitlab-ci.yml
+#   
+#  script:
+#    - !reference [.determine-private-api-key]
+
+.determine-private-api-key:
+  - export API_PRIVATE_KEY_NAME="${CUSTOM_PREFIX}Edp${TENANT}PrivateApiKey${AWS_SPOKE_VERSION}"
+  # Get all apikeys and filter on name
+  - export AWS_API_PRIVATE_KEY_ID=$(aws apigateway get-api-keys | jq --arg api_key_name $API_PRIVATE_KEY_NAME -r '.items[] | select(.name==$api_key_name) | .id')
+  # retrieve api_key value for the specific API_key    
+  - export API_PRIVATE_KEY=$(aws apigateway get-api-key --api-key "${AWS_API_PRIVATE_KEY_ID}" --include-value | jq -r '.value')
+  - echo $API_PRIVATE_KEY | sed -e 's/^\(.\{5\}\).*/\1*****/'
+  
+...
