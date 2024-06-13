@@ -3,7 +3,6 @@
 This repository contains a set of gitlab-ci templates.
 These range from gitlab-ci services, to jobs, to job templates, to full pipelines, and some utilities.
 
-
 ## Index
 
 Find a list of all available content beneath. Specific documenation and usage of any job, template, ... can be found in the docstring header of the implementation (cfr listed links)
