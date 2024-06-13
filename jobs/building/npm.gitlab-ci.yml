@@ -16,9 +16,7 @@ include:
   - project: automation/awx/sq_cicd_core_backend
     ref: v1.0.0
     file: core_backend_deployment_multi_template.yml
-  - project: automation/cicd/templates
-    ref: feature/ISSTM-1230
-    file: jobs/utils/extract-stage-from-branch.gitlab-ci.yml
+  - local: jobs/utils/extract-stage-from-branch.gitlab-ci.yml
   
 npm-build:
   stage: build
