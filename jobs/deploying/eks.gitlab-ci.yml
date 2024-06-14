@@ -36,6 +36,6 @@ include:
   script:
     - ./scripts/galaxy_collections.sh
     - aws eks update-kubeconfig --name $AWS_EKS_CLUSTER_NAME --region $AWS_REGION
-    - ansible-playbook site.yml -t aws-applications -D -v --vault-password-file=~/.ansible_vault -e aws_env=$AWS_ENV -e aws_spoke_env=$AWS_SPOKE_ENV -e aws_region=$AWS_REGION -e aws_application=$CI_PROJECT_NAME -e application_helm_targetRevision=$HELM_REVISION -e application_tag=$CI_COMMIT_SHORT_SHA
+    - ansible-playbook site.yml -t aws-applications -D --vault-password-file=~/.ansible_vault -e aws_env=$AWS_ENV -e aws_spoke_env=$AWS_SPOKE_ENV -e aws_region=$AWS_REGION -e aws_application=$CI_PROJECT_NAME -e application_helm_targetRevision=$HELM_REVISION -e application_tag=$CI_COMMIT_SHORT_SHA
 
 ...
