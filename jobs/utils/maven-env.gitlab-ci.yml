@@ -15,10 +15,14 @@
 #    - !reference [.maven-env]
 
 variables:
+  # Default PROJECT_ROOT
+  PROJECT_ROOT: "."
   # Default Maven options
   MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT -Dhttps.proxyHost=$PROXY_HOST -Dhttps.proxyPort=$PROXY_PORT -Dhttp.nonProxyHosts=$NON_PROXY_HOSTS -Dhttps.nonProxyHosts=$NON_PROXY_HOSTS"
   MAVEN_CLI_OPTS: "-s $CI_PROJECT_DIR/.m2/settings.xml -B -U"
   JGITVER_BRANCH: $CI_COMMIT_BRANCH
+  RENOVATE_BOT_AUTO_RELEASE: "False"
+  RENOVATE_AUTORELEASE_USER: 'renovatebot_iss'
 
 .maven-env:
   before_script:
