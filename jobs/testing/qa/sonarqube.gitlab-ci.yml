@@ -76,7 +76,7 @@ sonarqube:
     SONAR_PULLREQUEST_BASE: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
     SONAR_PULLREQUEST_PROVIDER: "GitlabSonar"
   image:
-    name: sonarsource/sonar-scanner-cli:10
+    name: sonarsource/sonar-scanner-cli:5
     entrypoint: [""]
   allow_failure: false
   script:
