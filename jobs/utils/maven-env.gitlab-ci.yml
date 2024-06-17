@@ -23,6 +23,7 @@ variables:
   JGITVER_BRANCH: $CI_COMMIT_BRANCH
   RENOVATE_BOT_AUTO_RELEASE: "False"
   RENOVATE_AUTORELEASE_USER: 'renovatebot_iss'
+  INCLUDE_IN_RELEASE_PAGE: "NO"
 
 .maven-env:
   before_script:
