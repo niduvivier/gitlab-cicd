@@ -7,8 +7,8 @@ maven-update-release-page:
     JIRA_TOKEN: $GITLAB_RUNNER_JIRA_TKN
     COMPONENT_NAME: $CI_PROJECT_TITLE
     COMPONENT_VERSION: $VERSION
-    JIRA_PROJECT: "ISSTM"
-    SQUAD_ABBREVIATION: "ISS"
+    JIRA_PROJECT: "HESISTM"
+    SQUAD_ABBREVIATION: "HESIS"
   image: "${REGISTRY}/enttribe/iss/release-automation:latest"
   rules:
     - if: $INCLUDE_IN_RELEASE_PAGE == "YES" && $CI_COMMIT_TAG != null
