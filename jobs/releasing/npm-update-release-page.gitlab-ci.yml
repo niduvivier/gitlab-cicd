@@ -34,6 +34,10 @@ npm-update-release-page:
     - !reference [.npm-determine-nexus-link]
   script:
     - export NEXUS_LINK=$ARTIFACT_LINK_TO_DEPLOY
+    - echo $COMPONENT_NAME
+    - echo $COMPONENT_VERSION
+    - echo $JIRA_PROJECT
+    - echo $SQUAD_ABBREVIATION
     - python /script/release-automation.py
 
 ...

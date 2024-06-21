@@ -26,6 +26,10 @@ maven-update-release-page:
     - echo $REPOSITORY_DISTRIBUTION
     - export NEXUS_LINK="${NEXUS_URL}/service/rest/repository/browse/${REPOSITORY_DISTRIBUTION}/${POM_GROUP_ID//.//}/${POM_ARTIFACT_ID}/${VERSION}"
     - echo $NEXUS_LINK
+    - echo $COMPONENT_NAME
+    - echo $COMPONENT_VERSION
+    - echo $JIRA_PROJECT
+    - echo $SQUAD_ABBREVIATION
     - python /script/release-automation.py
 
 ...
