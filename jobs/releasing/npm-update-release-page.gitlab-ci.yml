@@ -23,8 +23,8 @@ npm-update-release-page:
     JIRA_TOKEN: $GITLAB_RUNNER_JIRA_TKN
     COMPONENT_NAME: $CI_PROJECT_TITLE
     COMPONENT_VERSION: $VERSION
-    JIRA_PROJECT: "ISSTM"
-    SQUAD_ABBREVIATION: "ISS"
+    JIRA_PROJECT: "HESISTM"
+    SQUAD_ABBREVIATION: "HESIS"
   image: 
     name: registry.dev.yelo.inet.telenet.be/enttribe/iss/release-automation:latest
     pull_policy: always
