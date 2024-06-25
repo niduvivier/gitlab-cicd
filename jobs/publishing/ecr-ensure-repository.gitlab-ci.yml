@@ -39,5 +39,6 @@ ecr-ensure-repository:
   script:
     - ./scripts/galaxy_collections.sh
     - ansible-playbook site.yml -t aws-repositories -D --vault-password-file=~/.ansible_vault -e aws_env=$AWS_ENV -e aws_region=$AWS_REGION -e aws_application=$CI_PROJECT_NAME
+  needs: []
 
 ...
