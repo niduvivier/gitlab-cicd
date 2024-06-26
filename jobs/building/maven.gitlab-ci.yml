@@ -29,11 +29,11 @@ maven-build:
     - echo "$MAVEN_CLI_OPTS $MAVEN_COMPILE_PHASE -DskipTests $MAVEN_OPTS" 
     - mvn $MAVEN_CLI_OPTS $MAVEN_COMPILE_PHASE -DskipTests $MAVEN_OPTS
     - if [ -z "$VERSION" ]; then
-    -   VERSION=$(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_OPTS)
+    -   VERSION=$(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project.version -q -DforceStdout $MAVEN_OPTS)
     - fi
-    - POM_ARTIFACT_ID=$(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project.artifactId -q -DforceStdout $MAVEN_OPTS)
+    - POM_ARTIFACT_ID=$(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project.artifactId -q -DforceStdout $MAVEN_OPTS)
     - mkdir target || true
-    - echo $(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate -Dexpression=project -q -DforceStdout $MAVEN_OPTS) > "target/effective-pom.xml"
+    - echo $(mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-help-plugin:3.4.1:evaluate -Dexpression=project -q -DforceStdout $MAVEN_OPTS) > "target/effective-pom.xml"
     - SHORT_VERSION=$(echo $VERSION | sed 's/[^0-9.]*//g')    
     - echo "VERSION=$VERSION" >> maven.env
     - echo "SHORT_VERSION=$SHORT_VERSION" >> maven.env
