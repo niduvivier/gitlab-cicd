@@ -38,7 +38,7 @@ semantic-release:
     NPM_TOKEN: ${YARN_AUTH_TOKEN}
     NPM_CONFIG_REGISTRY: ${NEXUS_URL}/repository/npm-internal
     GL_TOKEN: ${SEMANTICRELEASE_TOKEN}
-  image: $REGISTRY/semantic-release:v3.2.140
+  image: $REGISTRY/semantic-release:v3.2.154
   stage: release
   before_script:
     - !reference [.gitlab_http_access, before_script]
