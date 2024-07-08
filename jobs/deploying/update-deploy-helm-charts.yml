@@ -9,11 +9,11 @@
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
-#     file: jobs/deploying/update-deployment-helm-charts.yml
+#     file: jobs/deploying/update-deploy-helm-charts.yml
 # stages:
 #   - deploy
 
-.update-deployment-helm-charts:
+.update-deploy-helm-charts:
   image: registry.dev.yelo.inet.telenet.be/enttribe/kube-tools:1.0.0
   stage: deploy
   variables:
