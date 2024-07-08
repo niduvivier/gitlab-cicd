@@ -24,8 +24,8 @@ include:
   variables:
     AWS_ENV: ""
     AWS_SPOKE_ENV: ""
-    INFRASTRUCTURE_PATH: "core-backend-platforms/ovp/infrastructure.git"
-    INFRASTRUCTURE_BRANCH: "develop"
+    INFRASTRUCTURE_PATH: ""
+    INFRASTRUCTURE_BRANCH: ""
     ARS_AWS_PROFILE: "$AWS_ACCOUNT_NAME"
     ARS_AWS_ROLE_TO_ASSUME: "arn:aws:iam::$AWS_ACCOUNT:role/$AWS_ASSUME_ROLE_FOR_DEPLOY"
   before_script:
