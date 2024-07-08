@@ -9,7 +9,7 @@
 # include:
 #   - project: automation/cicd/templates
 #     ref: ${latest project version}
-#     file: jobs/deploying/update-deploy-helm-charts.yml
+#     file: jobs/deploying/update-deploy-helm-charts.gitlab-ci.yml
 # stages:
 #   - deploy
 
