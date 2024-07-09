@@ -15,8 +15,6 @@ publish-maven-ecr-image:
       artifacts: true
     - job: maven-create-jar
       artifacts: true
-    - job: ecr-ensure-repository
-      artifacts: false
   script:
     - ${KANIKO_COMMAND} --dockerfile Dockerfile --destination $ECR_REGISTRY/$CI_PROJECT_NAME:$BUILD_VERSION --destination $ECR_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
 

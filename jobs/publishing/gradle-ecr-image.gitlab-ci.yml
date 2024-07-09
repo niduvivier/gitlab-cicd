@@ -11,10 +11,6 @@ publish-gradle-ecr-image:
     - .gradle-env
     - .aws_assume_role
   image: registry.dev.yelo.inet.telenet.be/vqd/gradle-ecr-helper:7.4.2-jdk17
-  needs: 
-    - job: ecr-ensure-repository
-      artifacts: false
-      optional: true
   before_script:
     - !reference [.gradle-env, before_script]
     - !reference [.aws_assume_role, before_script]
